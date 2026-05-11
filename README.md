@@ -1,4 +1,4 @@
-# ThreatSimGPT: Enterprise AI-Powered Threat Simulation Platform
+# Ciicerone: Enterprise AI-Powered Threat Simulation Platform
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -6,7 +6,7 @@
 [![Code Quality](https://img.shields.io/badge/maintainability-A+-brightgreen.svg)](https://github.com/ThreatSimGPT/ThreatSimGPT)
 [![Security: Bandit](https://img.shields.io/badge/security-bandit-green.svg)](https://github.com/PyCQA/bandit)
 
-**ThreatSimGPT** is an enterprise-grade cybersecurity threat simulation platform that leverages Large Language Models (LLMs) to generate realistic, context-aware threat scenarios for security training, red team exercises, and compliance testing.
+**Ciicerone** is an enterprise-grade cybersecurity threat simulation platform that leverages Large Language Models (LLMs) to generate realistic, context-aware threat scenarios for security training, red team exercises, and compliance testing.
 
 ## Overview
 
