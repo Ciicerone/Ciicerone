@@ -11,7 +11,7 @@ jobs:
     name: Unit Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
-      matrix
+      matrix:
         python-version: ["3.11", "3.12"]
       fail-fast: false
 
