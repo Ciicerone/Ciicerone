@@ -117,7 +117,6 @@ ignore = [
     "F402",   # Import shadowed by loop var
     "F541",   # f-string without placeholders (cosmetic)
     "F811",   # Redefinition of unused name
-    "F821",   # Undefined name
     "F841",   # Local variable assigned but never used
     "W291",   # Trailing whitespace
     "W292",   # No newline at end of file
