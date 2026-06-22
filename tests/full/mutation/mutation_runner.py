@@ -207,7 +207,7 @@ dict_synonyms = Struct, NamedTuple
 # Define which modules to target for mutation testing
 MUTATION_TARGETS = {
     "core": {
-        "path": "src/threatsimgpt/core",
+        "path": "src/ciicerone/core",
         "min_kill_rate": 80.0,
         "priority": "high",
         "files": [
@@ -217,7 +217,7 @@ MUTATION_TARGETS = {
         ]
     },
     "config": {
-        "path": "src/threatsimgpt/config",
+        "path": "src/ciicerone/config",
         "min_kill_rate": 85.0,
         "priority": "high",
         "files": [
@@ -227,7 +227,7 @@ MUTATION_TARGETS = {
         ]
     },
     "llm": {
-        "path": "src/threatsimgpt/llm",
+        "path": "src/ciicerone/llm",
         "min_kill_rate": 70.0,
         "priority": "medium",
         "files": [
@@ -237,7 +237,7 @@ MUTATION_TARGETS = {
         ]
     },
     "safety": {
-        "path": "src/threatsimgpt/safety",
+        "path": "src/ciicerone/safety",
         "min_kill_rate": 90.0,
         "priority": "critical",
         "files": [
@@ -245,7 +245,7 @@ MUTATION_TARGETS = {
         ]
     },
     "intelligence": {
-        "path": "src/threatsimgpt/intelligence",
+        "path": "src/ciicerone/intelligence",
         "min_kill_rate": 75.0,
         "priority": "medium",
         "files": [

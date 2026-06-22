@@ -290,7 +290,7 @@ class MockFactory:
 @contextmanager
 def temp_directory() -> Generator[Path, None, None]:
     """Create a temporary directory that's cleaned up after use."""
-    tmp_dir = Path(tempfile.mkdtemp(prefix="threatsimgpt_test_"))
+    tmp_dir = Path(tempfile.mkdtemp(prefix="ciicerone_test_"))
     try:
         yield tmp_dir
     finally:
@@ -304,7 +304,7 @@ def temp_file(
     encoding: str = "utf-8"
 ) -> Generator[Path, None, None]:
     """Create a temporary file with content."""
-    fd, path = tempfile.mkstemp(suffix=suffix, prefix="threatsimgpt_test_")
+    fd, path = tempfile.mkstemp(suffix=suffix, prefix="ciicerone_test_")
     try:
         with os.fdopen(fd, 'w', encoding=encoding) as f:
             f.write(content)

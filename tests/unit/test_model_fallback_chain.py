@@ -10,7 +10,7 @@ import time
 from typing import Any, Dict, List
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from threatsimgpt.llm.fallback_chain import (
+from ciicerone.llm.fallback_chain import (
     ModelFallbackChain,
     FallbackChainConfig,
     SelectionStrategy,
@@ -22,8 +22,8 @@ from threatsimgpt.llm.fallback_chain import (
     MetricsCollector,
     create_fallback_chain,
 )
-from threatsimgpt.llm.base import BaseLLMProvider, LLMResponse
-from threatsimgpt.llm.exceptions import RateLimitError
+from ciicerone.llm.base import BaseLLMProvider, LLMResponse
+from ciicerone.llm.exceptions import RateLimitError
 
 
 # ============================================================================

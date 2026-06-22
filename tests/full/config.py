@@ -117,7 +117,7 @@ class EnterpriseTestConfig:
     # Paths
     project_root: Path = field(default_factory=lambda: Path(__file__).parent.parent.parent)
     test_root: Path = field(default_factory=lambda: Path(__file__).parent.parent)
-    src_root: Path = field(default_factory=lambda: Path(__file__).parent.parent.parent / "src" / "threatsimgpt")
+    src_root: Path = field(default_factory=lambda: Path(__file__).parent.parent.parent / "src" / "ciicerone")
     
     # Test execution settings
     parallel_workers: int = field(default_factory=lambda: os.cpu_count() or 4)

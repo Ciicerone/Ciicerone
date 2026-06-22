@@ -1,9 +1,9 @@
-# ThreatSimGPT Developer Guide
+# Ciicerone Developer Guide
 
 **Version:** 1.0.0  
 **Last Updated:** November 2025
 
-Comprehensive guide for contributing to ThreatSimGPT, understanding the architecture, and developing new features.
+Comprehensive guide for contributing to Ciicerone, understanding the architecture, and developing new features.
 
 ---
 
@@ -31,8 +31,8 @@ Comprehensive guide for contributing to ThreatSimGPT, understanding the architec
 
 ```bash
 # Clone repository
-git clone https://github.com/threatsimgpt-AI/ThreatSimGPT.git
-cd ThreatSimGPT
+git clone https://github.com/ciicerone/Ciicerone.git
+cd Ciicerone
 
 # Create virtual environment
 python3 -m venv .venv
@@ -73,9 +73,9 @@ mkdocs                # Alternative docs
 ### Directory Structure
 
 ```
-ThreatSimGPT/
+Ciicerone/
 ├── src/
-│   └── threatsimgpt/
+│   └── ciicerone/
 │       ├── __init__.py
 │       ├── __main__.py          # CLI entry point
 │       ├── api/                 # REST API
@@ -122,7 +122,7 @@ ThreatSimGPT/
 The core threat simulation orchestrator:
 
 ```python
-class ThreatSimulator:
+class Ciiceroneulator:
     """Main simulation engine."""
     
     async def execute_simulation(
@@ -336,18 +336,18 @@ tests/
 
 ```python
 import pytest
-from threatsimgpt.core.simulator import ThreatSimulator
+from ciicerone.core.simulator import Simulator
 
 def test_simulator_initialization():
     """Test simulator creates successfully."""
-    simulator = ThreatSimulator()
+    simulator = Simulator()
     assert simulator is not None
     assert simulator.max_stages == 10
 
 @pytest.mark.asyncio
 async def test_content_generation():
     """Test LLM content generation."""
-    simulator = ThreatSimulator()
+    simulator = Simulator()
     scenario = create_test_scenario()
     
     content = await simulator._generate_stage_content(
@@ -368,7 +368,7 @@ pytest
 pytest tests/unit/test_simulator.py
 
 # Run with coverage
-pytest --cov=src/threatsimgpt --cov-report=html
+pytest --cov=src/ciicerone --cov-report=html
 
 # Run specific test
 pytest tests/unit/test_simulator.py::test_simulator_initialization
@@ -383,7 +383,7 @@ Define reusable fixtures in `conftest.py`:
 
 ```python
 import pytest
-from threatsimgpt.core.models import ThreatScenario
+from ciicerone.core.models import ThreatScenario
 
 @pytest.fixture
 def sample_scenario():
@@ -398,7 +398,7 @@ def sample_scenario():
 @pytest.fixture
 async def llm_manager():
     """Create LLM manager for testing."""
-    from threatsimgpt.llm.manager import LLMManager
+    from ciicerone.llm.manager import LLMManager
     return LLMManager()
 ```
 
@@ -411,7 +411,7 @@ async def llm_manager():
 1. **Fork Repository**
    ```bash
    # Fork on GitHub, then clone
-   git clone https://github.com/YOUR_USERNAME/ThreatSimGPT.git
+   git clone https://github.com/YOUR_USERNAME/Ciicerone.git
    ```
 
 2. **Create Feature Branch**
@@ -440,7 +440,7 @@ async def llm_manager():
    bandit -r src/
    
    # Run tests
-   pytest --cov=src/threatsimgpt
+   pytest --cov=src/ciicerone
    ```
 
 5. **Commit Changes**
@@ -485,11 +485,11 @@ chore: maintenance tasks
 1. **Create Provider Class**
 
 ```python
-# src/threatsimgpt/llm/providers/my_provider.py
+# src/ciicerone/llm/providers/my_provider.py
 
 from typing import Optional
-from threatsimgpt.llm.base import BaseLLMProvider
-from threatsimgpt.llm.models import LLMResponse
+from ciicerone.llm.base import BaseLLMProvider
+from ciicerone.llm.models import LLMResponse
 
 class MyProvider(BaseLLMProvider):
     """Custom LLM provider implementation."""
@@ -516,9 +516,9 @@ class MyProvider(BaseLLMProvider):
 2. **Register Provider**
 
 ```python
-# src/threatsimgpt/llm/manager.py
+# src/ciicerone/llm/manager.py
 
-from threatsimgpt.llm.providers.my_provider import MyProvider
+from ciicerone.llm.providers.my_provider import MyProvider
 
 class LLMManager:
     def __init__(self):
@@ -546,7 +546,7 @@ llm:
 1. **Create Command Module**
 
 ```python
-# src/threatsimgpt/cli/mycommand.py
+# src/ciicerone/cli/mycommand.py
 
 import click
 
@@ -560,13 +560,13 @@ def my_command(option: str):
 2. **Register in Main CLI**
 
 ```python
-# src/threatsimgpt/cli/main.py
+# src/ciicerone/cli/main.py
 
-from threatsimgpt.cli.mycommand import my_command
+from ciicerone.cli.mycommand import my_command
 
 @click.group()
 def cli():
-    """ThreatSimGPT CLI."""
+    """Ciicerone CLI."""
     pass
 
 cli.add_command(my_command)
@@ -586,7 +586,7 @@ logging:
 
 ```bash
 # Or via environment
-export THREATSIMGPT_LOG_LEVEL=DEBUG
+export CIICERONE_LOG_LEVEL=DEBUG
 ```
 
 ### Using Python Debugger
@@ -606,10 +606,10 @@ breakpoint()
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: ThreatSimGPT CLI",
+      "name": "Python: Ciicerone CLI",
       "type": "python",
       "request": "launch",
-      "module": "threatsimgpt.cli.main",
+      "module": "ciicerone.cli.main",
       "args": ["simulate", "-s", "templates/executive_phishing.yaml"],
       "console": "integratedTerminal"
     }
@@ -649,6 +649,6 @@ python -m twine upload dist/*
 
 ## Support
 
-- **Issues:** https://github.com/threatsimgpt-AI/ThreatSimGPT/issues
-- **Discussions:** https://github.com/threatsimgpt-AI/ThreatSimGPT/discussions
-- **Email:** threatsimgpt@hotmail.com
+- **Issues:** https://github.com/ciicerone/Ciicerone/issues
+- **Discussions:** https://github.com/ciicerone/Ciicerone/discussions
+- **Email:** ciicerone@ciicerone.com

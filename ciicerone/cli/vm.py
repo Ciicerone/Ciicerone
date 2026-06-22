@@ -150,7 +150,7 @@ RUN pip3 install --break-system-packages \\
 
 # Configure SSH
 RUN mkdir /var/run/sshd && \\
-    echo 'root:ciicerone' | chpasswd && \\
+    echo 'root:${LAB_SSH_PASSWORD:-labpass}' | chpasswd && \\
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 EXPOSE 22
@@ -209,12 +209,12 @@ RUN apt-get update && apt-get install -y \\
 
 # Configure SSH
 RUN mkdir /var/run/sshd && \\
-    echo 'root:vulnerable' | chpasswd && \\
+    echo 'root:${LAB_TARGET_PASSWORD:-targetpass}' | chpasswd && \\
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # Add vulnerable user
 RUN useradd -m -s /bin/bash admin && \\
-    echo 'admin:admin123' | chpasswd
+    echo 'admin:${LAB_USER_PASSWORD:-userpass}' | chpasswd
 
 EXPOSE 22 80 3306
 

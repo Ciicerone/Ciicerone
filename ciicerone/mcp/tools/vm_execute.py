@@ -101,12 +101,11 @@ The script will be uploaded to /tmp and executed.""",
 ]
 
 
-# nosemgrep: python.lang.security.audit.hardcoded-password-default-argument.hardcoded-password-default-argument
 async def execute_ssh_command(
     host: str,
     command: str,
     username: str = "root",
-    password: str = "ciicerone",  # nosec B107 - Intentional lab default
+    password: str = "",  # nosec B107 - Must be provided via env var
     timeout: int = 60
 ) -> dict:
     """

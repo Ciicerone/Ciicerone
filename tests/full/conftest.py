@@ -64,7 +64,7 @@ def project_root() -> Path:
 @pytest.fixture(scope="session")
 def src_root(project_root) -> Path:
     """Get source root directory."""
-    return project_root / "src" / "threatsimgpt"
+    return project_root / "src" / "ciicerone"
 
 
 @pytest.fixture(scope="session")
@@ -360,9 +360,9 @@ def mock_filesystem():
 
 @pytest.fixture
 def clean_env():
-    """Clean environment without ThreatSimGPT variables."""
+    """Clean environment without Ciicerone variables."""
     original = {}
-    prefixes = ["THREATSIMGPT_", "OPENAI_", "ANTHROPIC_"]
+    prefixes = ["CIICERONE_", "OPENAI_", "ANTHROPIC_"]
     
     for key in list(os.environ.keys()):
         for prefix in prefixes:
@@ -379,7 +379,7 @@ def clean_env():
 def mock_env():
     """Mock environment with test API keys."""
     with env_vars(
-        THREATSIMGPT_ENV="test",
+        CIICERONE_ENV="test",
         OPENAI_API_KEY="sk-test-" + "x" * 45,
         ANTHROPIC_API_KEY="sk-ant-test-" + "x" * 45,
     ):

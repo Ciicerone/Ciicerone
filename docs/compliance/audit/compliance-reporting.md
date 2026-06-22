@@ -1,4 +1,4 @@
-**ThreatSimGPT Compliance Reporting**
+**Ciicerone Compliance Reporting**
 
 **Version:** 1.0
 **Effective Date:** January 20, 2026
@@ -10,7 +10,7 @@
 
 **Overview**
 
-This document establishes the procedures for generating, distributing, and maintaining compliance reports for ThreatSimGPT. It covers report types, schedules, formats, and stakeholder requirements.
+This document establishes the procedures for generating, distributing, and maintaining compliance reports for Ciicerone. It covers report types, schedules, formats, and stakeholder requirements.
 
 ---
 

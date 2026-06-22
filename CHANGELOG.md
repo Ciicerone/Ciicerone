@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to ThreatSimGPT will be documented in this file.
+All notable changes to Ciicerone will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,14 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive Audit Framework documentation (Issue #117)
-  - Audit logging policy with CEF/JSON/Syslog format standards
-  - Audit events catalog with 50+ security event definitions
-  - Compliance reporting templates (executive, security ops, compliance, incident)
-  - Evidence collection procedures and chain of custody guidelines
-  - Log retention policy with tiered schedules by data classification
-  - Audit trail integrity mechanisms using HMAC-SHA256 tamper-evident logging
-- GDPR compliance documentation suite (Issue #115)
+
+#### Compliance Documentation (Issue #115)
+- **GDPR Compliance Framework**: Comprehensive documentation suite for GDPR (EU) 2016/679 compliance
+  - Data mapping and processing activities register (Article 30)
+  - Consent management framework with technical implementation (Article 7)
+  - Data subject rights implementation guide (Articles 12-23)
+  - Data Protection Impact Assessment (DPIA) template (Article 35)
+  - Privacy notice for platform users (Articles 13-14)
+  - Data Processing Agreement (DPA) template (Article 28)
+  - Breach notification templates and procedures (Articles 33-34)
+  - Records of Processing Activities (ROPA) (Article 30)
+- **Acceptable Use Policy**: Foundation policy document for platform usage guidelines
+- Industry standard alignment: ISO 27701, ICO Guidance, EDPB Guidelines
 
 ### Changed
 - Nothing yet
@@ -29,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Initial Release
 
-This is the first official release of ThreatSimGPT, an enterprise-grade AI-powered threat simulation platform.
+This is the first official release of Ciicerone, an enterprise-grade AI-powered threat simulation platform.
 
 ### Added
 
@@ -76,15 +81,15 @@ This is the first official release of ThreatSimGPT, an enterprise-grade AI-power
 - LANL Authentication Dataset
 
 #### CLI Commands
-- `threatsimgpt simulate` - Run threat simulations
-- `threatsimgpt templates` - Manage templates
-- `threatsimgpt llm` - Configure LLM providers
-- `threatsimgpt datasets` - Manage datasets
-- `threatsimgpt deploy` - Deployment integration
-- `threatsimgpt logs` - View simulation logs
-- `threatsimgpt intel` - Threat intelligence
-- `threatsimgpt rag` - RAG system management
-- `threatsimgpt feedback` - Feedback loop system
+- `Ciicerone simulate` - Run threat simulations
+- `Ciicerone templates` - Manage templates
+- `Ciicerone llm` - Configure LLM providers
+- `Ciicerone datasets` - Manage datasets
+- `Ciicerone deploy` - Deployment integration
+- `Ciicerone logs` - View simulation logs
+- `Ciicerone intel` - Threat intelligence
+- `Ciicerone rag` - RAG system management
+- `Ciicerone feedback` - Feedback loop system
 
 #### API Endpoints
 - `/api/v1/simulate` - Run simulations
@@ -117,7 +122,7 @@ This is the first official release of ThreatSimGPT, an enterprise-grade AI-power
 
 ## Versioning
 
-ThreatSimGPT follows Semantic Versioning:
+Ciicerone follows Semantic Versioning:
 
 - **MAJOR** version: Incompatible API changes
 - **MINOR** version: New functionality (backwards compatible)
@@ -136,12 +141,12 @@ If you were using pre-release development builds:
 
 ## Links
 
-- [GitHub Repository](https://github.com/ThreatSimGPT/ThreatSimGPT)
-- [Documentation](https://github.com/ThreatSimGPT/ThreatSimGPT/docs)
-- [Issue Tracker](https://github.com/ThreatSimGPT/ThreatSimGPT/issues)
-- [Security Policy](https://github.com/ThreatSimGPT/ThreatSimGPT/security)
+- [GitHub Repository](https://github.com/Ciicerone/Ciicerone)
+- [Documentation](https://github.com/Ciicerone/Ciicerone/docs)
+- [Issue Tracker](https://github.com/Ciicerone/Ciicerone/issues)
+- [Security Policy](https://github.com/Ciicerone/Ciicerone/security)
 
 ---
 
-[Unreleased]: https://github.com/ThreatSimGPT/ThreatSimGPT/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/ThreatSimGPT/ThreatSimGPT/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Ciicerone/Ciicerone/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Ciicerone/Ciicerone/releases/tag/v0.1.0

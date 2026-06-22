@@ -1,5 +1,5 @@
 # ================================
-# ThreatSimGPT API - Production Dockerfile
+# Ciicerone API - Production Dockerfile
 # ================================
 # Multi-stage build for optimized container size
 
@@ -32,8 +32,8 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 FROM python:3.11-slim
 
 # Set labels
-LABEL maintainer="ThreatSimGPT Team"
-LABEL description="ThreatSimGPT - AI-Powered Threat Simulation Platform"
+LABEL maintainer="Ciicerone Team"
+LABEL description="Ciicerone - AI-Powered Threat Simulation Platform"
 LABEL version="1.0.0"
 
 # Set environment variables
@@ -43,7 +43,7 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH="/app:$PYTHONPATH"
 
 # Create app user
-RUN groupadd -r threatsimgpt && useradd -r -g threatsimgpt threatsimgpt
+RUN groupadd -r ciicerone && useradd -r -g ciicerone ciicerone
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -58,17 +58,17 @@ WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
 
 # Copy application code
-COPY --chown=threatsimgpt:threatsimgpt threatsimgpt/ /app/threatsimgpt/
-COPY --chown=threatsimgpt:threatsimgpt templates/ /app/templates/
-COPY --chown=threatsimgpt:threatsimgpt config.yaml /app/
-COPY --chown=threatsimgpt:threatsimgpt pyproject.toml /app/
+COPY --chown=ciicerone:ciicerone ciicerone/ /app/ciicerone/
+COPY --chown=ciicerone:ciicerone templates/ /app/templates/
+COPY --chown=ciicerone:ciicerone config.yaml /app/
+COPY --chown=ciicerone:ciicerone pyproject.toml /app/
 
 # Create necessary directories
 RUN mkdir -p /app/data /app/logs /app/generated_content /app/reports /app/output && \
-    chown -R threatsimgpt:threatsimgpt /app
+    chown -R ciicerone:ciicerone /app
 
 # Switch to app user
-USER threatsimgpt
+USER ciicerone
 
 # Expose port
 EXPOSE 8000
@@ -78,4 +78,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Default command - run API server
-CMD ["python", "-m", "uvicorn", "threatsimgpt.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+CMD ["python", "-m", "uvicorn", "ciicerone.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

@@ -1,13 +1,13 @@
 # =============================================================================
-# CODEOWNERS for ThreatSimGPT
+# CODEOWNERS for Ciicerone
 # =============================================================================
-# Primary Contact: threatsimgpt@hotmail.com | threatsimgpt@gmail.com
+# Primary Contact: ciicerone@ciicerone.com
 # Repository Owner: @Thundastormgod
 # 
 # These owners will be requested for review when someone opens a PR.
 # Order matters - later matches take precedence.
 #
-# For issues and questions, contact: @Thundastormgod or threatsimgpt@hotmail.com
+# For issues and questions, contact: @Thundastormgod or ciicerone@ciicerone.com
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -21,31 +21,31 @@
 # Maintainers: Jibo, Lara (TSG-DEV) - Co-Core Software Developers
 # Emails: ajiboyshokunbi@yahoo.com, @laradipupo
 # -----------------------------------------------------------------------------
-/threatsimgpt/core/ @Thundastormgod @laradipupo
-/threatsimgpt/config/ @Thundastormgod @laradipupo
-/threatsimgpt/api/ @Thundastormgod @laradipupo
+/ciicerone/core/ @Thundastormgod @laradipupo
+/ciicerone/config/ @Thundastormgod @laradipupo
+/ciicerone/api/ @Thundastormgod @laradipupo
 
 # -----------------------------------------------------------------------------
 # CLI Interface
 # Maintainers: Jibo, Lara (TSG-DEV) - Co-Core Software Developers
 # Emails: ajiboyshokunbi@yahoo.com, @laradipupo
 # -----------------------------------------------------------------------------
-/threatsimgpt/cli/ @Thundastormgod @laradipupo
+/ciicerone/cli/ @Thundastormgod @laradipupo
 
 # -----------------------------------------------------------------------------
 # LLM Integration & ML/AI
 # Maintainer: Lanre (TSG-ML)
 # Email: hr.lanreshittu@yahoo.com
 # -----------------------------------------------------------------------------
-/threatsimgpt/llm/ @Thundastormgod
-/threatsimgpt/rag/ @Thundastormgod
+/ciicerone/llm/ @Thundastormgod
+/ciicerone/rag/ @Thundastormgod
 
 # -----------------------------------------------------------------------------
 # Security & Safety - RED Team (Offensive)
 # Maintainers: Temi, Olabisi (TSG-RED)
 # Emails: noblenabeela360@gmail.com, bayulus4great@gmail.com
 # -----------------------------------------------------------------------------
-/threatsimgpt/safety/ @Thundastormgod
+/ciicerone/safety/ @Thundastormgod
 /SECURITY.md @Thundastormgod
 
 # -----------------------------------------------------------------------------
@@ -53,15 +53,15 @@
 # Maintainer: David (TSG-BLUE)
 # Email: onojad@gmail.com
 # -----------------------------------------------------------------------------
-/threatsimgpt/analytics/ @Thundastormgod
-/threatsimgpt/intelligence/ @Thundastormgod
+/ciicerone/analytics/ @Thundastormgod
+/ciicerone/intelligence/ @Thundastormgod
 
 # -----------------------------------------------------------------------------
 # Deployment & DevOps
 # Maintainers: Jibo, Lara (TSG-DEV) - Co-Core Software Developers
 # Emails: ajiboyshokunbi@yahoo.com, @laradipupo
 # -----------------------------------------------------------------------------
-/threatsimgpt/deployment/ @Thundastormgod @laradipupo
+/ciicerone/deployment/ @Thundastormgod @laradipupo
 /.github/workflows/ @Thundastormgod @laradipupo
 /Dockerfile* @Thundastormgod @laradipupo
 /docker-compose* @Thundastormgod @laradipupo
@@ -71,15 +71,15 @@
 # Maintainer: David (TSG-BLUE)
 # Email: onojad@gmail.com
 # -----------------------------------------------------------------------------
-/threatsimgpt/datasets/ @Thundastormgod
+/ciicerone/datasets/ @Thundastormgod
 
 # -----------------------------------------------------------------------------
 # Platform Integrations & MCP
 # Maintainers: Jibo, Lara (TSG-DEV) - Co-Core Software Developers
 # Emails: ajiboyshokunbi@yahoo.com, @laradipupo
 # -----------------------------------------------------------------------------
-/threatsimgpt/mcp/ @Thundastormgod @laradipupo
-/threatsimgpt/vm/ @Thundastormgod @laradipupo
+/ciicerone/mcp/ @Thundastormgod @laradipupo
+/ciicerone/vm/ @Thundastormgod @laradipupo
 
 # -----------------------------------------------------------------------------
 # Documentation
@@ -93,7 +93,7 @@
 # Maintainer: Jerry (TSG-COMP)
 # GitHub: @Okino007
 # -----------------------------------------------------------------------------
-/threatsimgpt/feedback/ @Thundastormgod @Okino007
+/ciicerone/feedback/ @Thundastormgod @Okino007
 
 # -----------------------------------------------------------------------------
 # Templates & Scenarios

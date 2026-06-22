@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Dict, List
 from unittest.mock import AsyncMock, MagicMock, patch, mock_open
 
-from threatsimgpt.intelligence.mitre_attack import (
+from ciicerone.intelligence.mitre_attack import (
     MITREATTACKEngine,
     ATTACKMatrix,
     ATTACKDomain,

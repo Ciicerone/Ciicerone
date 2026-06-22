@@ -1,4 +1,4 @@
-"""Alembic migrations configuration for ThreatSimGPT.
+"""Alembic migrations configuration for Ciicerone.
 
 This file configures Alembic for managing database schema migrations.
 """
@@ -22,7 +22,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Database URL from environment
-database_url = os.getenv("DATABASE_URL", "postgresql://localhost/threatsimgpt")
+database_url = os.getenv("DATABASE_URL", "postgresql://localhost/ciicerone")
 config.set_main_option("sqlalchemy.url", database_url)
 
 # Target metadata (not using SQLAlchemy ORM, so None)

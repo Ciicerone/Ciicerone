@@ -9,7 +9,7 @@ import yaml
 import json
 from typing import List
 
-from threatsimgpt.analytics.detection_rules import (
+from ciicerone.analytics.detection_rules import (
     DetectionRule,
     DetectionLogic,
     LogSourceConfig,
@@ -721,7 +721,7 @@ class TestCLIIntegration:
     
     def test_generators_are_importable(self):
         """Test that all generators can be imported."""
-        from threatsimgpt.analytics.detection_rules import (
+        from ciicerone.analytics.detection_rules import (
             SigmaRuleGenerator,
             SplunkRuleGenerator,
             ElasticRuleGenerator,
@@ -735,7 +735,7 @@ class TestCLIIntegration:
     
     def test_cli_detect_group_exists(self):
         """Test that detect CLI group exists."""
-        from threatsimgpt.cli.detect import detect_group
+        from ciicerone.cli.detect import detect_group
         
         assert detect_group is not None
         # Check commands exist

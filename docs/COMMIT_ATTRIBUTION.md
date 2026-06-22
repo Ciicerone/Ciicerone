@@ -1,7 +1,7 @@
-# ThreatSimGPT Commit Attribution Document
+# Ciicerone Commit Attribution Document
 
 > **Last Updated:** January 17, 2026  
-> **Repository:** threatsimgpt-AI/ThreatSimGPT  
+> **Repository:** ciicerone-AI/Ciicerone  
 > **Purpose:** Comprehensive tracking of all contributions to the codebase
 
 ---
@@ -21,7 +21,7 @@
 
 | GitHub Username | Full Name | Email | Primary Contributions |
 |-----------------|-----------|-------|----------------------|
-| `@Thundastormgod` | Thundastormgod | threatsimgpt@hotmail.com | Project Lead, Event Sourcing, Safety Guardrails |
+| `@Thundastormgod` | Thundastormgod | ciicerone@hotmail.com | Project Lead, Event Sourcing, Safety Guardrails |
 | `@jiboo2022` | AJIBOLA OLAJIDE-SHOKUNBI | jiboo2022@users.noreply.github.com | CI/CD, API Development, Security Fixes |
 | `@bayulus` | Olabisi Olajide | 77527597+bayulus@users.noreply.github.com | Template Security, Guardrails Engineering |
 | `@ocheme1107` | David Onoja | onojad@gmail.com | SIEM Detection Rules, SPL Injection Fix |
@@ -30,7 +30,7 @@
 | `@laradipupo` | Laradev | omolaradipupo11@gmail.com | Docker Containerization |
 | `@mykael02` | Mykael | apochibishop@gmail.com | Testing Infrastructure |
 | `@2abet` | Akinyemi Arabambi | 32962207+2abet@users.noreply.github.com | Documentation Fixes |
-| `@threatsimgpt-AI` | ThreatSimGPT (Org) | threatsimgpt@gmail.com | Merge Operations, Maintenance |
+| `@ciicerone-AI` | Ciicerone (Org) | ciicerone@gmail.com | Merge Operations, Maintenance |
 
 ---
 
@@ -39,7 +39,7 @@
 ### PR #92 - CI Security Fix + Template Security Validation
 **Merged:** January 17, 2026  
 **Author:** @jiboo2022 (AJIBOLA OLAJIDE-SHOKUNBI)  
-**Merged By:** @threatsimgpt-AI  
+**Merged By:** @ciicerone-AI  
 **Squash Commit:** `db320f7`
 
 | Included Work | Original Author | Original Commits |
@@ -60,7 +60,7 @@
 ### PR #73 - REST API for Feedback Loop
 **Merged:** January 17, 2026  
 **Author:** @jiboo2022 (AJIBOLA OLAJIDE-SHOKUNBI)  
-**Merged By:** @threatsimgpt-AI  
+**Merged By:** @ciicerone-AI  
 **Squash Commit:** `60fe85c`
 
 | Component | Description |
@@ -76,7 +76,7 @@
 ### PR #69 - Safety Guardrails Engine
 **Merged:** January 15, 2026  
 **Author:** @Thundastormgod  
-**Merged By:** @threatsimgpt-AI  
+**Merged By:** @ciicerone-AI  
 **Merge Commits:** `3b89145`, `e82b519`
 
 | Included Work | Original Author | Original Commits |
@@ -110,7 +110,7 @@
 ### PR #59 - SPL Injection Prevention
 **Merged:** January 4, 2026  
 **Author:** @ocheme1107 (David Onoja)  
-**Merged By:** @threatsimgpt-AI  
+**Merged By:** @ciicerone-AI  
 **Squash Commit:** `680478f`
 
 | Included Work | Original Author | Original Commits |
@@ -151,7 +151,7 @@
 | 2026-01-16 | `9a48d51` | @bayulus | feat(security): Template security validation (Issue #74) |
 | 2026-01-16 | `bcfc37a` | @bayulus | feat(security): Template security validation (Issue #74) |
 | 2026-01-16 | `58886a6` | @jiboo2022 | feat(api): REST API for feedback loop (#3) |
-| 2026-01-15 | `3b89145` | @threatsimgpt-AI | Merge PR #69 (Safety Guardrails) |
+| 2026-01-15 | `3b89145` | @ciicerone-AI | Merge PR #69 (Safety Guardrails) |
 | 2026-01-15 | `05d8f1e` | @bayulus | refactor(guardrails): RateLimiter/CircuitBreaker fixes |
 | 2026-01-15 | `e8bb1c1` | @bayulus | feat(security): P0 guardrails security fixes |
 | 2026-01-14 | `761a02a` | @Thundastormgod | Merge Phase 1 Event Sourcing |
@@ -163,8 +163,8 @@
 | 2026-01-04 | `8f01b56` | @jiboo2022 | refactor(security): Code quality for SPL fix |
 | 2026-01-04 | `2d75b45` | @ocheme1107 | fix(security): SPL injection hardening |
 | 2026-01-04 | `1505301` | @ocheme1107 | fix(security): SPL injection in SplunkRuleGenerator |
-| 2026-01-04 | `34321f5` | @threatsimgpt-AI | chore(security): Clean .gitignore |
-| 2026-01-04 | `6a8285c` | @threatsimgpt-AI | fix(analytics): Lazy-load numpy/sklearn |
+| 2026-01-04 | `34321f5` | @ciicerone-AI | chore(security): Clean .gitignore |
+| 2026-01-04 | `6a8285c` | @ciicerone-AI | fix(analytics): Lazy-load numpy/sklearn |
 | 2026-01-03 | `12e7b7f` | @ocheme1107 | feat(detection): SIEM detection rule generator |
 | 2026-01-02 | `bbfa71e` | @Thundastormgod | refactor: Update maintainer roles |
 | 2026-01-02 | `4b6472a` | @Thundastormgod | chore: CHANGELOG and PR template |
@@ -175,7 +175,7 @@
 | Date | Commit | Author | Description |
 |------|--------|--------|-------------|
 | 2025-12-31 | `65bcfbc` | Initial Setup | feat(api): Manuals & Knowledge Base APIs |
-| 2025-12-30 | `536502f` | Initial Setup | Initial release: ThreatSimGPT v0.1.0 |
+| 2025-12-30 | `536502f` | Initial Setup | Initial release: Ciicerone v0.1.0 |
 | 2025-12-11 | `c984ce7` | @Thundastormgod | Merge PR #2 |
 | 2025-12-10 | `7d40b93` | @mykael02 | refactor: Replace mock with real SDK |
 | 2025-12-10 | `ada0ae1` | @mykael02 | feat: Testing infrastructure |
@@ -202,7 +202,7 @@
 | 2025-09-28 | `e6ea4ec` | @Thundastormgod | feat: Content storage system |
 | 2025-09-27 | `518d8da` | @Thundastormgod | docs: Virtual environment guide |
 | 2025-09-27 | `fedabcc` | @Thundastormgod | feat: Template management system |
-| 2025-09-26 | `74caf28` | @Thundastormgod | Initial commit: ThreatGPT system |
+| 2025-09-26 | `74caf28` | @Thundastormgod | Initial commit: Ciicerone system |
 
 ---
 
@@ -361,5 +361,5 @@ This document should be updated when:
 3. Collaborative work needs attribution
 4. Squash merges hide individual contributions
 
-**Maintained by:** ThreatSimGPT Core Team  
-**Contact:** threatsimgpt@gmail.com
+**Maintained by:** Ciicerone Core Team  
+**Contact:** ciicerone@gmail.com

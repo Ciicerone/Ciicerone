@@ -25,10 +25,10 @@ jobs:
         pip install ruff
     
     - name: Run ruff linter
-      run: ruff check Ciicerone/ciicerone/ tests/
+      run: ruff check ciicerone/ tests/
     
     - name: Check ruff formatting
-      run: ruff format --check Ciicerone/ciicerone/ tests/ || true
+      run: ruff format --check ciicerone/ tests/ || true
 
   test-coverage:
     name: Test Coverage

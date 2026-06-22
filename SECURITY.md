@@ -4,7 +4,7 @@
 
 ## Supported Versions
 
-We provide security updates for the following versions of ThreatSimGPT:
+We provide security updates for the following versions of Ciicerone:
 
 | Version | Supported          | End of Support |
 | ------- | ------------------ | -------------- |
@@ -14,15 +14,15 @@ We provide security updates for the following versions of ThreatSimGPT:
 
 ## Reporting a Vulnerability
 
-The ThreatSimGPT team takes security seriously. We appreciate your efforts to responsibly disclose your findings.
+The Ciicerone team takes security seriously. We appreciate your efforts to responsibly disclose your findings.
 
 ### How to Report
 
 **IMPORTANT: Do NOT use GitHub Issues for security vulnerabilities**
 
 Instead, please report security vulnerabilities to:
-- **Email**: threatsimgpt@hotmail.com
-- **Subject**: `[SECURITY] ThreatSimGPT Vulnerability Report`
+- **Email**: ciicerone@hotmail.com
+- **Subject**: `[SECURITY] Ciicerone Vulnerability Report`
 
 ### What to Include
 
@@ -44,7 +44,7 @@ Please include the following information in your security report:
 
 ### Security Measures
 
-ThreatSimGPT implements several security measures:
+Ciicerone implements several security measures:
 
 #### Code Security
 - Static code analysis with Bandit
@@ -111,11 +111,11 @@ We will not pursue legal action against security researchers who:
 
 ### Recognition
 
-We believe in recognizing security researchers who help improve ThreatSimGPT:
+We believe in recognizing security researchers who help improve Ciicerone:
 
 - **Hall of Fame**: Recognition in our security acknowledgments
 - **Credits**: Listed in release notes and documentation
-- **Swag**: ThreatSimGPT merchandise for significant findings
+- **Swag**: Ciicerone merchandise for significant findings
 
 ### Security Updates
 
@@ -128,7 +128,7 @@ When security updates are released:
 
 ### Best Practices for Users
 
-To use ThreatSimGPT securely:
+To use Ciicerone securely:
 
 #### API Keys
 - Store API keys in environment variables
@@ -143,7 +143,7 @@ To use ThreatSimGPT securely:
 - Implement proper content filtering
 
 #### Infrastructure
-- Keep ThreatSimGPT updated to latest version
+- Keep Ciicerone updated to latest version
 - Monitor for security advisories
 - Use secure hosting environments
 - Implement proper access controls
@@ -156,7 +156,7 @@ To use ThreatSimGPT securely:
 
 ### Compliance
 
-ThreatSimGPT is designed to comply with:
+Ciicerone is designed to comply with:
 - GDPR (General Data Protection Regulation)
 - CCPA (California Consumer Privacy Act)
 - SOC 2 principles
@@ -165,10 +165,10 @@ ThreatSimGPT is designed to comply with:
 ### Contact Information
 
 For security-related questions:
-- **Security Email**: security@threatsimgpt.com
-- **General Issues**: [GitHub Issues](https://github.com/threatsimgpt-AI/ThreatSimGPT/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/threatsimgpt-AI/ThreatSimGPT/discussions)
+- **Security Email**: security@ciicerone.com
+- **General Issues**: [GitHub Issues](https://github.com/ciicerone/ciicerone/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ciicerone/ciicerone/discussions)
 
 ---
 
-**Note**: This security policy applies only to the ThreatSimGPT codebase. For security issues with dependencies or third-party services, please report to the respective maintainers.
+**Note**: This security policy applies only to the Ciicerone codebase. For security issues with dependencies or third-party services, please report to the respective maintainers.

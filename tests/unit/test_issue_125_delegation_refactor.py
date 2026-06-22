@@ -15,7 +15,7 @@ from uuid import uuid4
 
 import sys
 
-from threatsimgpt.analytics import (
+from ciicerone.analytics import (
     CampaignAnalyticsEngine,
     CampaignAnalytics,
     AnalyticsEventType,

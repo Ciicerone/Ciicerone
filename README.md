@@ -1,12 +1,12 @@
-# ThreatSimGPT: Enterprise AI-Powered Threat Simulation Platform
+# Ciicerone: Enterprise AI-Powered Threat Simulation Platform
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Production Ready](https://img.shields.io/badge/status-production%20ready-brightgreen.svg)](https://github.com/ThreatSimGPT/ThreatSimGPT)
-[![Code Quality](https://img.shields.io/badge/maintainability-A+-brightgreen.svg)](https://github.com/ThreatSimGPT/ThreatSimGPT)
+[![Production Ready](https://img.shields.io/badge/status-production%20ready-brightgreen.svg)](https://github.com/Ciicerone/Ciicerone)
+[![Code Quality](https://img.shields.io/badge/maintainability-A+-brightgreen.svg)](https://github.com/Ciicerone/Ciicerone)
 [![Security: Bandit](https://img.shields.io/badge/security-bandit-green.svg)](https://github.com/PyCQA/bandit)
 
-**ThreatSimGPT** is an enterprise-grade cybersecurity threat simulation platform that leverages Large Language Models (LLMs) to generate realistic, context-aware threat scenarios for security training, red team exercises, and compliance testing.
+**Ciicerone** is an enterprise-grade cybersecurity threat simulation platform that leverages Large Language Models (LLMs) to generate realistic, context-aware threat scenarios for security training, red team exercises, and compliance testing.
 
 ## Overview
 
@@ -37,7 +37,7 @@
 ### System Components
 
 ```
-ThreatSimGPT Platform
+Ciicerone Platform
 ├── Core Simulation Engine
 │   ├── Template Manager (YAML-based scenario definitions)
 │   ├── Simulation Orchestrator (Execution and workflow management)
@@ -102,8 +102,8 @@ ThreatSimGPT Platform
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/threatsimgpt-AI/ThreatSimGPT.git
-cd ThreatSimGPT
+git clone https://github.com/ciicerone/ciicerone.git
+cd Ciicerone
 ```
 
 #### 2. Create Virtual Environment
@@ -154,20 +154,20 @@ simulation:
   
 logging:
   level: INFO
-  file: "./logs/threatsimgpt.log"
+  file: "./logs/ciicerone.log"
 ```
 
 #### 5. Verify Installation
 
 ```bash
 # Check CLI availability
-threatsimgpt --help
+ciicerone --help
 
 # Validate installation
-threatsimgpt templates validate-all
+ciicerone templates validate-all
 
 # Test with dry run (no API calls)
-threatsimgpt simulate -s templates/executive_phishing.yaml --dry-run
+ciicerone simulate -s templates/executive_phishing.yaml --dry-run
 ```
 
 ---
@@ -180,61 +180,61 @@ threatsimgpt simulate -s templates/executive_phishing.yaml --dry-run
 
 ```bash
 # List all available templates
-threatsimgpt templates list
+ciicerone templates list
 
 # Show template details with validation
-threatsimgpt templates show executive_phishing --validate
+ciicerone templates show executive_phishing --validate
 
 # Validate all templates
-threatsimgpt templates validate-all
+ciicerone templates validate-all
 
 # Check template ecosystem health
-threatsimgpt templates health
+ciicerone templates health
 ```
 
 #### Running Simulations
 
 ```bash
 # Run a simulation
-threatsimgpt simulate -s templates/executive_phishing.yaml
+ciicerone simulate -s templates/executive_phishing.yaml
 
 # Dry run (no API calls)
-threatsimgpt simulate -s templates/executive_phishing.yaml --dry-run
+ciicerone simulate -s templates/executive_phishing.yaml --dry-run
 
 # Specify output directory
-threatsimgpt simulate -s templates/finance_bec.yaml -o ./output/campaign_001
+ciicerone simulate -s templates/finance_bec.yaml -o ./output/campaign_001
 
 # Run with specific LLM provider
-threatsimgpt simulate -s templates/it_helpdesk.yaml --provider openai
+ciicerone simulate -s templates/it_helpdesk.yaml --provider openai
 ```
 
 #### Configuration Management
 
 ```bash
 # Show current configuration
-threatsimgpt config show
+ciicerone config show
 
 # Set configuration value
-threatsimgpt config set llm.provider openrouter
+ciicerone config set llm.provider openrouter
 
 # Validate configuration
-threatsimgpt config validate
+ciicerone config validate
 ```
 
 #### Dataset Management
 
 ```bash
 # List available datasets
-threatsimgpt datasets list
+ciicerone datasets list
 
 # Download and process dataset
-threatsimgpt datasets download phishtank
+ciicerone datasets download phishtank
 
 # Show dataset statistics
-threatsimgpt datasets stats enron
+ciicerone datasets stats enron
 
 # Update all datasets
-threatsimgpt datasets update-all
+ciicerone datasets update-all
 ```
 
 ### REST API
@@ -243,13 +243,13 @@ threatsimgpt datasets update-all
 
 ```bash
 # Start FastAPI server
-threatsimgpt api start
+ciicerone api start
 
 # Specify host and port
-threatsimgpt api start --host 0.0.0.0 --port 8000
+ciicerone api start --host 0.0.0.0 --port 8000
 
 # Start with auto-reload (development)
-threatsimgpt api start --reload
+ciicerone api start --reload
 ```
 
 #### API Endpoints
@@ -290,10 +290,10 @@ curl "http://localhost:8000/templates"
 ### Python SDK
 
 ```python
-from threatsimgpt import ThreatSimGPTClient
+from ciicerone import CiiceroneClient
 
 # Initialize client
-client = ThreatSimGPTClient(api_key="your-api-key", provider="openrouter")
+client = CiiceroneClient(api_key="your-api-key", provider="openrouter")
 
 # Load and run simulation
 simulation = client.load_template("templates/executive_phishing.yaml")
@@ -369,7 +369,7 @@ deployment:
 # Logging Configuration
 logging:
   level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-  file: "./logs/threatsimgpt.log"
+  file: "./logs/ciicerone.log"
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   rotation: "10 MB"
   retention: 30  # days
@@ -397,8 +397,8 @@ export M365_CLIENT_ID="your-client-id"
 export M365_CLIENT_SECRET="your-client-secret"
 
 # Application Settings
-export THREATSIMGPT_ENV="production"
-export THREATSIMGPT_LOG_LEVEL="INFO"
+export CIICERONE_ENV="production"
+export CIICERONE_LOG_LEVEL="INFO"
 ```
 
 ---
@@ -481,12 +481,12 @@ threat_type: social_engineering
 
 3. **Validate Template:**
 ```bash
-threatsimgpt templates show my_custom_template --validate
+ciicerone templates show my_custom_template --validate
 ```
 
 4. **Run Simulation:**
 ```bash
-threatsimgpt simulate -s templates/my_custom_template.yaml
+ciicerone simulate -s templates/my_custom_template.yaml
 ```
 
 ---
@@ -499,10 +499,10 @@ threatsimgpt simulate -s templates/my_custom_template.yaml
 
 ```bash
 # Build production image
-docker build -t threatsimgpt:latest .
+docker build -t ciicerone:latest .
 
 # Build with specific tag
-docker build -t threatsimgpt:v1.0.0 .
+docker build -t ciicerone:v1.0.0 .
 ```
 
 #### Run Container
@@ -510,20 +510,20 @@ docker build -t threatsimgpt:v1.0.0 .
 ```bash
 # Run with environment variables
 docker run -d \
-  --name threatsimgpt \
+  --name ciicerone \
   -p 8000:8000 \
   -e OPENROUTER_API_KEY="your-key" \
   -v $(pwd)/generated_content:/app/generated_content \
   -v $(pwd)/logs:/app/logs \
-  threatsimgpt:latest
+  ciicerone:latest
 
 # Run with config file
 docker run -d \
-  --name threatsimgpt \
+  --name ciicerone \
   -p 8000:8000 \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/generated_content:/app/generated_content \
-  threatsimgpt:latest
+  ciicerone:latest
 ```
 
 ### Docker Compose
@@ -534,14 +534,14 @@ docker run -d \
 version: '3.8'
 
 services:
-  threatsimgpt-api:
-    image: threatsimgpt:latest
-    container_name: threatsimgpt-api
+  ciicerone-api:
+    image: ciicerone:latest
+    container_name: ciicerone-api
     ports:
       - "8000:8000"
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - THREATSIMGPT_ENV=production
+      - CIICERONE_ENV=production
     volumes:
       - ./config.yaml:/app/config.yaml:ro
       - ./generated_content:/app/generated_content
@@ -549,16 +549,16 @@ services:
       - ./data:/app/data
     restart: unless-stopped
     
-  threatsimgpt-worker:
-    image: threatsimgpt:latest
-    container_name: threatsimgpt-worker
+  ciicerone-worker:
+    image: ciicerone:latest
+    container_name: ciicerone-worker
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
       - ./config.yaml:/app/config.yaml:ro
       - ./generated_content:/app/generated_content
       - ./data:/app/data
-    command: ["python", "-m", "threatsimgpt.worker"]
+    command: ["python", "-m", "ciicerone.worker"]
     restart: unless-stopped
 ```
 
@@ -572,7 +572,7 @@ docker-compose up -d
 docker-compose logs -f
 
 # Scale API instances
-docker-compose up -d --scale threatsimgpt-api=3
+docker-compose up -d --scale ciicerone-api=3
 
 # Stop services
 docker-compose down
@@ -588,29 +588,29 @@ docker-compose down
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: threatsimgpt
+  name: ciicerone
   labels:
-    app: threatsimgpt
+    app: ciicerone
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: threatsimgpt
+      app: ciicerone
   template:
     metadata:
       labels:
-        app: threatsimgpt
+        app: ciicerone
     spec:
       containers:
-      - name: threatsimgpt
-        image: threatsimgpt:latest
+      - name: ciicerone
+        image: ciicerone:latest
         ports:
         - containerPort: 8000
         env:
         - name: OPENROUTER_API_KEY
           valueFrom:
             secretKeyRef:
-              name: threatsimgpt-secrets
+              name: ciicerone-secrets
               key: openrouter-api-key
         volumeMounts:
         - name: config
@@ -621,49 +621,49 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: threatsimgpt-config
+          name: ciicerone-config
       - name: storage
         persistentVolumeClaim:
-          claimName: threatsimgpt-pvc
+          claimName: ciicerone-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: threatsimgpt
+  name: ciicerone
 spec:
   type: LoadBalancer
   ports:
   - port: 80
     targetPort: 8000
   selector:
-    app: threatsimgpt
+    app: ciicerone
 ```
 
 **Deploy:**
 
 ```bash
 # Create namespace
-kubectl create namespace threatsimgpt
+kubectl create namespace ciicerone
 
 # Create secrets
-kubectl create secret generic threatsimgpt-secrets \
+kubectl create secret generic ciicerone-secrets \
   --from-literal=openrouter-api-key="your-key" \
-  -n threatsimgpt
+  -n ciicerone
 
 # Create config map
-kubectl create configmap threatsimgpt-config \
+kubectl create configmap ciicerone-config \
   --from-file=config.yaml \
-  -n threatsimgpt
+  -n ciicerone
 
 # Apply deployment
-kubectl apply -f k8s/ -n threatsimgpt
+kubectl apply -f k8s/ -n ciicerone
 
 # Check status
-kubectl get pods -n threatsimgpt
-kubectl get svc -n threatsimgpt
+kubectl get pods -n ciicerone
+kubectl get svc -n ciicerone
 
 # View logs
-kubectl logs -f deployment/threatsimgpt -n threatsimgpt
+kubectl logs -f deployment/ciicerone -n ciicerone
 ```
 
 ---
@@ -742,7 +742,7 @@ kubectl logs -f deployment/threatsimgpt -n threatsimgpt
 
 ```bash
 # Enable metrics endpoint
-threatsimgpt api start --metrics
+ciicerone api start --metrics
 
 # Prometheus metrics available at /metrics
 curl http://localhost:8000/metrics
@@ -768,8 +768,8 @@ curl http://localhost:8000/health
 ### Quick Links
 
 - **API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs) (when running)
-- **GitHub Repository**: [https://github.com/threatsimgpt-AI/ThreatSimGPT](https://github.com/threatsimgpt-AI/ThreatSimGPT)
-- **Issue Tracker**: [https://github.com/threatsimgpt-AI/ThreatSimGPT/issues](https://github.com/threatsimgpt-AI/ThreatSimGPT/issues)
+- **GitHub Repository**: [https://github.com/ciicerone/ciicerone](https://github.com/ciicerone/ciicerone)
+- **Issue Tracker**: [https://github.com/ciicerone/ciicerone/issues](https://github.com/ciicerone/ciicerone/issues)
 
 ---
 
@@ -781,8 +781,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Clone repository
-git clone https://github.com/threatsimgpt-AI/ThreatSimGPT.git
-cd ThreatSimGPT
+git clone https://github.com/ciicerone/ciicerone.git
+cd Ciicerone
 
 # Create virtual environment
 python -m venv .venv
@@ -823,7 +823,7 @@ mypy src/
 
 #### Installation Issues
 
-**Problem**: `threatsimgpt: command not found`
+**Problem**: `ciicerone: command not found`
 
 **Solution**: Activate virtual environment
 ```bash
@@ -858,7 +858,7 @@ cp config.yaml.example config.yaml
 echo $OPENROUTER_API_KEY
 
 # Or set in config.yaml
-threatsimgpt config set llm.openrouter.api_key "your-key"
+ciicerone config set llm.openrouter.api_key "your-key"
 ```
 
 #### Runtime Issues
@@ -867,8 +867,8 @@ threatsimgpt config set llm.openrouter.api_key "your-key"
 
 **Solution**: Validate and fix templates
 ```bash
-threatsimgpt templates show my_template --validate
-threatsimgpt templates fix my_template
+ciicerone templates show my_template --validate
+ciicerone templates fix my_template
 ```
 
 **Problem**: Simulation fails with timeout
@@ -882,11 +882,11 @@ llm:
 
 ### Getting Help
 
-- **Check Logs**: `logs/threatsimgpt.log`
-- **Validate Configuration**: `threatsimgpt config validate`
-- **Test Connection**: `threatsimgpt llm test`
-- **GitHub Issues**: [Report a bug](https://github.com/threatsimgpt-AI/ThreatSimGPT/issues)
-- **Email Support**: threatsimgpt@hotmail.com
+- **Check Logs**: `logs/ciicerone.log`
+- **Validate Configuration**: `ciicerone config validate`
+- **Test Connection**: `ciicerone llm test`
+- **GitHub Issues**: [Report a bug](https://github.com/ciicerone/ciicerone/issues)
+- **Email Support**: ciicerone@ciicerone.com
 
 ---
 
@@ -896,7 +896,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Third-Party Licenses
 
-ThreatSimGPT uses the following open-source libraries:
+Ciicerone uses the following open-source libraries:
 - FastAPI (MIT License)
 - Pydantic (MIT License)
 - aiohttp (Apache 2.0)
@@ -918,10 +918,10 @@ Full license information available in `LICENSE` file.
 
 ## Support & Contact
 
-- **Documentation**: [https://github.com/threatsimgpt-AI/ThreatSimGPT](https://github.com/threatsimgpt-AI/ThreatSimGPT)
-- **Issues**: [GitHub Issues](https://github.com/threatsimgpt-AI/ThreatSimGPT/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/threatsimgpt-AI/ThreatSimGPT/discussions)
-- **Email**: threatsimgpt@hotmail.com
+- **Documentation**: [https://github.com/ciicerone/ciicerone](https://github.com/ciicerone/ciicerone)
+- **Issues**: [GitHub Issues](https://github.com/ciicerone/ciicerone/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ciicerone/ciicerone/discussions)
+- **Email**: ciicerone@ciicerone.com
 - **Twitter**: [@Thundastormgod](https://twitter.com/Thundastormgod)
 
 ---
@@ -952,7 +952,7 @@ Full license information available in `LICENSE` file.
 
 **Important Disclaimer**
 
-ThreatSimGPT is a simulation tool designed exclusively for:
+Ciicerone is a simulation tool designed exclusively for:
 - **Authorized security testing and training**
 - **Educational purposes**
 - **Research and development**

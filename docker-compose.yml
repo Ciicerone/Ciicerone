@@ -1,8 +1,8 @@
 # ================================
-# ThreatSimGPT - Complete Docker Stack
+# Ciicerone - Complete Docker Stack
 # ================================
 # Production-ready containerized deployment
-# Services: PostgreSQL, Redis, Ollama, ThreatSimGPT API, Prometheus, Grafana
+# Services: PostgreSQL, Redis, Ollama, Ciicerone API, Prometheus, Grafana
 
 services:
   # ================================
@@ -10,12 +10,12 @@ services:
   # ================================
   postgres:
     image: postgres:16-alpine
-    container_name: threatsimgpt-postgres
+    container_name: ciicerone-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-threatsimgpt}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-threatsimgpt_secure_pass_2024}
-      POSTGRES_DB: ${POSTGRES_DB:-threatsimgpt}
+      POSTGRES_USER: ${POSTGRES_USER:-ciicerone}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-ciicerone}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -23,22 +23,22 @@ services:
     ports:
       - "5433:5432"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-threatsimgpt}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ciicerone}"]
       interval: 10s
       timeout: 5s
       retries: 5
     labels:
-      com.threatsimgpt.service: "database"
-      com.threatsimgpt.description: "PostgreSQL database for persistent storage"
+      com.ciicerone.service: "database"
+      com.ciicerone.description: "PostgreSQL database for persistent storage"
 
   # ================================
   # Redis Cache
   # ================================
   redis:
     image: redis:7-alpine
-    container_name: threatsimgpt-redis
+    container_name: ciicerone-redis
     restart: unless-stopped
     command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     volumes:
@@ -46,29 +46,29 @@ services:
     ports:
       - "6380:6379"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 3s
       retries: 5
     labels:
-      com.threatsimgpt.service: "cache"
-      com.threatsimgpt.description: "Redis for caching and session management"
+      com.ciicerone.service: "cache"
+      com.ciicerone.description: "Redis for caching and session management"
 
   # ================================
   # Ollama - Local LLM Server
   # ================================
   ollama:
     image: ollama/ollama:latest
-    container_name: threatsimgpt-ollama
+    container_name: ciicerone-ollama
     restart: unless-stopped
     volumes:
       - ollama_models:/root/.ollama
     ports:
       - "11434:11434"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     environment:
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_ORIGINS=*
@@ -79,8 +79,8 @@ services:
       retries: 3
       start_period: 60s
     labels:
-      com.threatsimgpt.service: "llm"
-      com.threatsimgpt.description: "Local LLM server with Ollama"
+      com.ciicerone.service: "llm"
+      com.ciicerone.description: "Local LLM server with Ollama"
     deploy:
       resources:
         limits:
@@ -89,13 +89,13 @@ services:
           memory: 4G
 
   # ================================
-  # ThreatSimGPT API Server
+  # Ciicerone API Server
   # ================================
-  threatsimgpt-api:
+  ciicerone-api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: threatsimgpt-api
+    container_name: ciicerone-api
     restart: unless-stopped
     depends_on:
       postgres:
@@ -106,7 +106,7 @@ services:
         condition: service_started
     environment:
       # Database
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-threatsimgpt}:${POSTGRES_PASSWORD:-threatsimgpt_secure_pass_2024}@postgres:5432/${POSTGRES_DB:-threatsimgpt}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-ciicerone}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-ciicerone}
       # Redis
       - REDIS_URL=redis://redis:6379/0
       # LLM Providers
@@ -126,7 +126,7 @@ services:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
     volumes:
-      - ./threatsimgpt:/app/threatsimgpt:ro
+      - ./ciicerone:/app/ciicerone:ro
       - ./templates:/app/templates:ro
       - ./data:/app/data
       - ./logs:/app/logs
@@ -135,7 +135,7 @@ services:
     ports:
       - "8001:8000"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -143,15 +143,15 @@ services:
       retries: 3
       start_period: 40s
     labels:
-      com.threatsimgpt.service: "api"
-      com.threatsimgpt.description: "ThreatSimGPT main API server"
+      com.ciicerone.service: "api"
+      com.ciicerone.description: "Ciicerone main API server"
 
   # ================================
   # Prometheus - Metrics Collection
   # ================================
   prometheus:
     image: prom/prometheus:latest
-    container_name: threatsimgpt-prometheus
+    container_name: ciicerone-prometheus
     restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -165,28 +165,28 @@ services:
     ports:
       - "9091:9090"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     depends_on:
-      - threatsimgpt-api
+      - ciicerone-api
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
       interval: 30s
       timeout: 10s
       retries: 3
     labels:
-      com.threatsimgpt.service: "monitoring"
-      com.threatsimgpt.description: "Prometheus metrics collection"
+      com.ciicerone.service: "monitoring"
+      com.ciicerone.description: "Prometheus metrics collection"
 
   # ================================
   # Grafana - Metrics Visualization
   # ================================
   grafana:
     image: grafana/grafana:latest
-    container_name: threatsimgpt-grafana
+    container_name: ciicerone-grafana
     restart: unless-stopped
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin_change_this}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_ROOT_URL=http://localhost:3000
       - GF_INSTALL_PLUGINS=
@@ -197,7 +197,7 @@ services:
     ports:
       - "3001:3000"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     depends_on:
       - prometheus
     healthcheck:
@@ -206,19 +206,19 @@ services:
       timeout: 10s
       retries: 3
     labels:
-      com.threatsimgpt.service: "monitoring"
-      com.threatsimgpt.description: "Grafana metrics dashboard"
+      com.ciicerone.service: "monitoring"
+      com.ciicerone.description: "Grafana metrics dashboard"
 
   # ================================
   # PgAdmin - Database Management (Optional)
   # ================================
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: threatsimgpt-pgadmin
+    container_name: ciicerone-pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@threatsimgpt.local
-      PGADMIN_DEFAULT_PASSWORD: admin_change_this
+      PGADMIN_DEFAULT_EMAIL: admin@ciicerone.local
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?Set PGADMIN_PASSWORD in .env}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     volumes:
@@ -226,55 +226,55 @@ services:
     ports:
       - "5050:80"
     networks:
-      - threatsimgpt-network
+      - ciicerone-network
     depends_on:
       - postgres
     profiles:
       - tools
     labels:
-      com.threatsimgpt.service: "tools"
-      com.threatsimgpt.description: "PgAdmin database management interface"
+      com.ciicerone.service: "tools"
+      com.ciicerone.description: "PgAdmin database management interface"
 
 # ================================
 # Networks
 # ================================
 networks:
-  threatsimgpt-network:
+  ciicerone-network:
     driver: bridge
-    name: threatsimgpt-network
+    name: ciicerone-network
     labels:
-      com.threatsimgpt.network: "main"
+      com.ciicerone.network: "main"
 
 # ================================
 # Volumes
 # ================================
 volumes:
   postgres_data:
-    name: threatsimgpt-postgres-data
+    name: ciicerone-postgres-data
     labels:
-      com.threatsimgpt.volume: "database"
+      com.ciicerone.volume: "database"
   
   redis_data:
-    name: threatsimgpt-redis-data
+    name: ciicerone-redis-data
     labels:
-      com.threatsimgpt.volume: "cache"
+      com.ciicerone.volume: "cache"
   
   ollama_models:
-    name: threatsimgpt-ollama-models
+    name: ciicerone-ollama-models
     labels:
-      com.threatsimgpt.volume: "models"
+      com.ciicerone.volume: "models"
   
   prometheus_data:
-    name: threatsimgpt-prometheus-data
+    name: ciicerone-prometheus-data
     labels:
-      com.threatsimgpt.volume: "metrics"
+      com.ciicerone.volume: "metrics"
   
   grafana_data:
-    name: threatsimgpt-grafana-data
+    name: ciicerone-grafana-data
     labels:
-      com.threatsimgpt.volume: "dashboards"
+      com.ciicerone.volume: "dashboards"
   
   pgadmin_data:
-    name: threatsimgpt-pgadmin-data
+    name: ciicerone-pgadmin-data
     labels:
-      com.threatsimgpt.volume: "tools"
+      com.ciicerone.volume: "tools"

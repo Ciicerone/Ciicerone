@@ -18,7 +18,7 @@ from typing import List
 # Skip all tests if asyncpg not available
 asyncpg = pytest.importorskip("asyncpg")
 
-from threatsimgpt.core.event_sourcing import (
+from ciicerone.core.event_sourcing import (
     Event,
     AggregateType,
     ConcurrencyError,
@@ -27,7 +27,7 @@ from threatsimgpt.core.event_sourcing import (
     StageCompleted,
     SimulationCompleted,
 )
-from threatsimgpt.core.postgres_event_store import (
+from ciicerone.core.postgres_event_store import (
     PostgresEventStore,
     append_with_retry,
 )
@@ -50,7 +50,7 @@ def database_url():
     """Get database URL from environment or use default test URL."""
     return os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:postgres@localhost:5432/threatsimgpt_test"
+        "postgresql://postgres:postgres@localhost:5432/ciicerone_test"
     )
 
 

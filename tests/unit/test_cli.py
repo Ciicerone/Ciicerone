@@ -3,7 +3,7 @@
 import pytest
 from click.testing import CliRunner
 
-from threatsimgpt.cli.main import cli
+from ciicerone.cli.main import cli
 
 
 class TestCLI:
@@ -14,7 +14,7 @@ class TestCLI:
         runner = CliRunner()
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
-        assert "ThreatSimGPT" in result.output
+        assert "Ciicerone" in result.output
     
     def test_cli_help(self):
         """Test CLI help command."""
@@ -43,4 +43,4 @@ class TestCLI:
         runner = CliRunner()
         result = runner.invoke(cli, ["status"])
         assert result.exit_code == 0
-        assert "ThreatSimGPT System Status" in result.output
+        assert "Ciicerone System Status" in result.output

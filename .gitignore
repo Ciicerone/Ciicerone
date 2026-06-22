@@ -1,5 +1,5 @@
 # ============================================================================
-# ThreatSimGPT - .gitignore
+# Ciicerone - .gitignore
 # ============================================================================
 # Policy: Keep this clean with only standard/universal patterns.
 # All project-specific dev files, docs, and sensitive configs go in /dev/
@@ -65,3 +65,10 @@ coverage.xml
 *.tmp
 *.temp
 *.log
+
+# =========================
+# DEV FOLDER (local only)
+# =========================
+/dev/
+/dev-docs/
+/archive/

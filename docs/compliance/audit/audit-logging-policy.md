@@ -1,4 +1,4 @@
-**ThreatSimGPT Audit Logging Policy**
+**Ciicerone Audit Logging Policy**
 
 **Version:** 1.0
 **Effective Date:** January 20, 2026
@@ -10,7 +10,7 @@
 
 **Overview**
 
-This policy establishes the requirements for audit logging across all ThreatSimGPT systems and services. It defines what must be logged, how logs must be formatted, and the controls required to ensure log integrity.
+This policy establishes the requirements for audit logging across all Ciicerone systems and services. It defines what must be logged, how logs must be formatted, and the controls required to ensure log integrity.
 
 ---
 
@@ -118,7 +118,7 @@ All logs MUST use JSON format with the following structure:
 For SIEM integration, logs can be exported in Common Event Format:
 
 ```
-CEF:0|ThreatSimGPT|AuthService|2.1.0|AUTH_LOGIN_SUCCESS|User Login Success|3|
+CEF:0|Ciicerone|AuthService|2.1.0|AUTH_LOGIN_SUCCESS|User Login Success|3|
 src=192.168.1.100 suser=john.doe@example.com dst=auth-service 
 duser=usr_abc123 outcome=success rt=Jan 20 2026 12:00:00
 ```
@@ -128,7 +128,7 @@ duser=usr_abc123 outcome=success rt=Jan 20 2026 12:00:00
 For syslog forwarding:
 
 ```
-<134>1 2026-01-20T12:00:00.000Z auth-service threatsimgpt 12345 AUTH_LOGIN_SUCCESS 
+<134>1 2026-01-20T12:00:00.000Z auth-service Ciicerone 12345 AUTH_LOGIN_SUCCESS 
 [auth@12345 user_id="usr_abc123" ip="192.168.1.100" outcome="success"] User login successful
 ```
 
@@ -322,4 +322,4 @@ alerts:
 
 ---
 
-*This policy is enforced across all ThreatSimGPT systems and services.*
+*This policy is enforced across all Ciicerone systems and services.*

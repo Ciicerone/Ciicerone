@@ -1,4 +1,4 @@
-# ThreatSimGPT RAG Configuration
+# Ciicerone RAG Configuration
 # ================================
 
 # Embedding settings
@@ -14,7 +14,7 @@ vectorstore:
   host: "localhost"
   port: 7687
   database: "neo4j"
-  collection_name: "threatsimgpt_intelligence"
+  collection_name: "ciicerone_intelligence"
   distance_metric: "cosine"
   use_graph_context: true  # Enable graph-enhanced search
 

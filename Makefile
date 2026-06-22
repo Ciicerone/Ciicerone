@@ -5,7 +5,7 @@ VENV := .venv
 ACTIVATE := . $(VENV)/bin/activate
 
 help:
-	@echo "ThreatSimGPT Developer Commands"
+	@echo "Ciicerone Developer Commands"
 	@echo ""
 	@echo "make dev       → Create venv and install dev dependencies"
 	@echo "make install   → Install project in editable mode"

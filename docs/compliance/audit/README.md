@@ -1,4 +1,4 @@
-**ThreatSimGPT Audit Framework**
+**Ciicerone Audit Framework**
 
 **Version:** 1.0
 **Effective Date:** January 20, 2026
@@ -10,7 +10,7 @@
 
 **Executive Summary**
 
-This document establishes the comprehensive audit framework for ThreatSimGPT, providing governance, procedures, and technical controls for audit trail management, compliance reporting, and evidence collection.
+This document establishes the comprehensive audit framework for Ciicerone, providing governance, procedures, and technical controls for audit trail management, compliance reporting, and evidence collection.
 
 **Framework Status:** IMPLEMENTED
 
@@ -48,7 +48,7 @@ This document establishes the comprehensive audit framework for ThreatSimGPT, pr
 
 **Section 1.1 Purpose**
 
-The ThreatSimGPT Audit Framework provides:
+The Ciicerone Audit Framework provides:
 
 | Capability | Description |
 |------------|-------------|
@@ -90,7 +90,7 @@ The ThreatSimGPT Audit Framework provides:
 |------|----------------|--------|
 | Audit Lead | Framework ownership, policy approval | Compliance Team |
 | Technical Lead | Implementation oversight | Engineering Team |
-| Security Lead | Threat monitoring, incident response | Security Team |
+| Security Lead | Ciicerone monitoring, incident response | Security Team |
 | DPO | Privacy compliance validation | Data Protection Officer |
 
 **Section 2.2 Decision Authority Matrix**
@@ -320,7 +320,7 @@ All logs follow the Common Event Format (CEF) extended schema:
 **Section 8.2 Code Example**
 
 ```python
-from threatsimgpt.audit import AuditLogger, AuditEvent, Severity
+from ciicerone.audit import AuditLogger, AuditEvent, Severity
 
 audit = AuditLogger()
 
@@ -392,10 +392,10 @@ await audit.log(AuditEvent(
 
 | Contact | Email | Responsibility |
 |---------|-------|----------------|
-| Audit Lead | audit@threatsimgpt.io | Policy questions |
-| Security Team | security@threatsimgpt.io | Incident response |
-| Compliance | compliance@threatsimgpt.io | Regulatory questions |
-| DPO | dpo@threatsimgpt.io | Privacy concerns |
+| Audit Lead | audit@ciicerone.io | Policy questions |
+| Security Team | security@ciicerone.io | Incident response |
+| Compliance | compliance@ciicerone.io | Regulatory questions |
+| DPO | dpo@ciicerone.io | Privacy concerns |
 
 ---
 
@@ -407,5 +407,5 @@ await audit.log(AuditEvent(
 
 ---
 
-*This framework is maintained by the ThreatSimGPT Compliance Team.*
+*This framework is maintained by the Ciicerone Compliance Team.*
 *Next review: January 20, 2027*

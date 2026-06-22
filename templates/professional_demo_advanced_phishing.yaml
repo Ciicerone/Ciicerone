@@ -1,11 +1,11 @@
-# ThreatSimGPT Professional Template - Demo Creation
+# Ciicerone Professional Template - Demo Creation
 # This template demonstrates the full capabilities of the professional creation system
 
 metadata:
   name: 'Professional Demo: Advanced Phishing Campaign'
   description: Demonstration of professional template creation with multi-vector attack
     simulation targeting financial executives
-  author: ThreatSimGPT Professional System
+  author: Ciicerone Professional System
   version: 1.0.0
   created_at: '2025-09-27T03:29:40.442514Z'
   updated_at: '2025-09-27T03:29:40.442514Z'

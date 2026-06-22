@@ -20,7 +20,7 @@ from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from typing import List, Optional
 import time
 
-from threatsimgpt.core.batch_processor import (
+from ciicerone.core.batch_processor import (
     BatchConfig,
     BatchProgress,
     BatchResult,
@@ -32,7 +32,7 @@ from threatsimgpt.core.batch_processor import (
     process_scenarios_batch,
     process_scenarios_batch_sync,
 )
-from threatsimgpt.core.models import (
+from ciicerone.core.models import (
     ThreatScenario,
     SimulationResult,
     SimulationStatus,
@@ -96,8 +96,8 @@ def sample_scenarios() -> List[ThreatScenario]:
 
 
 @pytest.fixture
-def mock_threat_simulator():
-    """Create mock ThreatSimulator for testing."""
+def mock_simulator():
+    """Create mock Simulator for testing."""
     mock_sim = Mock()
     
     async def mock_execute(scenario):
@@ -122,8 +122,14 @@ def mock_threat_simulator():
 
 
 @pytest.fixture
+def mock_ciicerone_simulator(mock_simulator):
+    """Alias for mock_simulator — Ciicerone-branded fixture name."""
+    return mock_simulator
+
+
+@pytest.fixture
 def failing_mock_simulator():
-    """Create mock ThreatSimulator that fails occasionally."""
+    """Create mock Simulator that fails occasionally."""
     mock_sim = Mock()
     call_count = 0
     
@@ -309,13 +315,13 @@ class TestBatchProcessor:
     @pytest.mark.asyncio
     async def test_basic_batch_execution(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios, 
         fast_batch_config
     ):
         """Test basic batch execution completes all scenarios."""
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=fast_batch_config,
         )
         
@@ -516,10 +522,10 @@ class TestBatchProcessor:
                 assert "timed out" in job_result.error_message.lower()
     
     @pytest.mark.asyncio
-    async def test_empty_batch(self, mock_threat_simulator, fast_batch_config):
+    async def test_empty_batch(self, mock_ciicerone_simulator, fast_batch_config):
         """Test handling of empty scenario list."""
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=fast_batch_config,
         )
         
@@ -532,13 +538,13 @@ class TestBatchProcessor:
     @pytest.mark.asyncio
     async def test_single_scenario(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios, 
         fast_batch_config
     ):
         """Test batch with single scenario."""
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=fast_batch_config,
         )
         
@@ -549,7 +555,7 @@ class TestBatchProcessor:
         assert result.metrics.failed_jobs == 0
     
     @pytest.mark.asyncio
-    async def test_graceful_shutdown(self, mock_threat_simulator, sample_scenarios):
+    async def test_graceful_shutdown(self, mock_ciicerone_simulator, sample_scenarios):
         """Test graceful shutdown requests are handled."""
         config = BatchConfig(
             max_concurrency=2,
@@ -559,7 +565,7 @@ class TestBatchProcessor:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         
@@ -660,13 +666,13 @@ class TestBatchProcessor:
     @pytest.mark.asyncio
     async def test_concurrent_batch_rejection(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios, 
         fast_batch_config
     ):
         """Test that running concurrent batches on same processor raises error."""
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=fast_batch_config,
         )
         
@@ -686,7 +692,7 @@ class TestBatchProcessor:
         await task1
     
     @pytest.mark.asyncio
-    async def test_pause_and_resume(self, mock_threat_simulator, sample_scenarios):
+    async def test_pause_and_resume(self, mock_ciicerone_simulator, sample_scenarios):
         """Test pause and resume functionality."""
         config = BatchConfig(
             max_concurrency=2,
@@ -696,7 +702,7 @@ class TestBatchProcessor:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         
@@ -729,13 +735,13 @@ class TestProcessScenariosBatchSync:
     
     def test_sync_wrapper_execution(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios,
     ):
         """Test synchronous wrapper executes correctly."""
         # Patch to use our mock
-        with patch('threatsimgpt.core.batch_processor.ThreatSimulator', 
-                   return_value=mock_threat_simulator):
+        with patch('ciicerone.core.batch_processor.Simulator', 
+                   return_value=mock_simulator):
             result = process_scenarios_batch_sync(
                 scenarios=sample_scenarios[:3],
                 max_concurrency=5,
@@ -754,7 +760,7 @@ class TestBatchPerformance:
     @pytest.mark.asyncio
     async def test_throughput_calculation(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios
     ):
         """Test that throughput is calculated correctly."""
@@ -766,7 +772,7 @@ class TestBatchPerformance:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         result = await processor.process_batch(scenarios=sample_scenarios)
@@ -779,7 +785,7 @@ class TestBatchPerformance:
     
     @pytest.mark.asyncio
     @pytest.mark.slow
-    async def test_large_batch_handling(self, mock_threat_simulator):
+    async def test_large_batch_handling(self, mock_ciicerone_simulator):
         """Test handling of larger batch sizes."""
         # Generate 50 scenarios
         scenarios = [
@@ -802,7 +808,7 @@ class TestBatchPerformance:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         result = await processor.process_batch(scenarios=scenarios)
@@ -871,7 +877,7 @@ class TestBatchPerformance:
     @pytest.mark.asyncio
     async def test_metrics_accuracy(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios
     ):
         """Test that metrics are accurately calculated."""
@@ -883,7 +889,7 @@ class TestBatchPerformance:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         result = await processor.process_batch(scenarios=sample_scenarios)
@@ -913,7 +919,7 @@ class TestBatchEdgeCases:
     @pytest.mark.asyncio
     async def test_callback_exception_handling(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios
     ):
         """Test that exceptions in progress callback don't crash batch."""
@@ -925,7 +931,7 @@ class TestBatchEdgeCases:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         
@@ -942,7 +948,7 @@ class TestBatchEdgeCases:
         assert result.metrics.total_jobs == 3
     
     @pytest.mark.asyncio
-    async def test_duplicate_scenarios(self, mock_threat_simulator, fast_batch_config):
+    async def test_duplicate_scenarios(self, mock_ciicerone_simulator, fast_batch_config):
         """Test handling of duplicate scenarios in batch."""
         scenario = ThreatScenario(
             name="Duplicate Scenario",
@@ -957,7 +963,7 @@ class TestBatchEdgeCases:
         scenarios = [scenario] * 5
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=fast_batch_config,
         )
         result = await processor.process_batch(scenarios=scenarios)
@@ -967,7 +973,7 @@ class TestBatchEdgeCases:
         assert result.metrics.successful_jobs == 5
     
     @pytest.mark.asyncio
-    async def test_preserve_order(self, mock_threat_simulator, sample_scenarios):
+    async def test_preserve_order(self, mock_ciicerone_simulator, sample_scenarios):
         """Test that preserve_order config returns results in input order."""
         config = BatchConfig(
             max_concurrency=10,
@@ -978,7 +984,7 @@ class TestBatchEdgeCases:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         result = await processor.process_batch(scenarios=sample_scenarios[:5])
@@ -1038,7 +1044,7 @@ class TestBatchStreaming:
     @pytest.mark.asyncio
     async def test_streaming_yields_results(
         self, 
-        mock_threat_simulator, 
+        mock_ciicerone_simulator, 
         sample_scenarios
     ):
         """Test that streaming mode yields results as they complete."""
@@ -1050,7 +1056,7 @@ class TestBatchStreaming:
         )
         
         processor = BatchProcessor(
-            simulator=mock_threat_simulator,
+            simulator=mock_ciicerone_simulator,
             config=config,
         )
         

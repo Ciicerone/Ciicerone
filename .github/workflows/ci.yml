@@ -15,8 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     
@@ -31,19 +32,19 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install bandit pip-audit
         pip install -r requirements.txt
-        pip install -r requirements-dev.txt
-        pip install pytest pytest-cov pytest-asyncio ruff bandit
+        pip install -r requirements-dev.txt || true
+        pip install -e "." || true
+        pip install ruff bandit pytest pytest-cov pytest-asyncio
     
     - name: Lint with ruff
-      run: ruff check Ciicerone/ciicerone/ tests/
+      run: ruff check ciicerone/ tests/
     
     - name: Test with pytest
       run: pytest tests/unit/ -v --tb=short -p no:cacheprovider
     
     - name: Security scan with bandit
-      run: bandit -r Ciicerone/ciicerone/ -c pyproject.toml
+      run: bandit -r ciicerone/ -c pyproject.toml
 
   build:
     needs: test
@@ -54,7 +55,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
       with:
         python-version: "3.11"
     
@@ -77,9 +78,6 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: read
-      actions: read
     steps:
     - uses: actions/checkout@v4
     
@@ -93,7 +91,7 @@ jobs:
       continue-on-error: true
     
     - name: Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v4
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: 'trivy-results.sarif'
       continue-on-error: true

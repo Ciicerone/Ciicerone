@@ -1,5 +1,5 @@
 name: ✨ Feature Request
-description: Suggest a new feature or enhancement for ThreatSimGPT
+description: Suggest a new feature or enhancement for Ciicerone
 title: "[FEATURE] "
 labels: ["enhancement", "triage"]
 assignees: []
@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a feature! Your input helps make ThreatSimGPT better.
+        Thanks for suggesting a feature! Your input helps make Ciicerone better.
 
   - type: checkboxes
     id: existing-issue
@@ -33,7 +33,7 @@ body:
     attributes:
       label: Proposed Solution
       description: Describe the solution you'd like
-      placeholder: I would like ThreatSimGPT to...
+      placeholder: I would like Ciicerone to...
     validations:
       required: true
 
