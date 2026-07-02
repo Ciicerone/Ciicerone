@@ -54,6 +54,150 @@ class Simulator:
         self.max_stages = max_stages
         self.event_store = event_store
         self._active_simulations: Dict[str, SimulationResult] = {}
+        self._active_lock = asyncio.Lock()
+        self._sequence_counter = 0
+        self._sequence_lock = asyncio.Lock()
+
+    async def _next_sequence(self) -> int:
+        """Get the next event sequence number (thread-safe)."""
+        async with self._sequence_lock:
+            self._sequence_counter += 1
+            return self._sequence_counter
+
+    async def _emit_event(self, event: Any) -> None:
+        """Emit an event to the event store if one is configured.
+
+        Failures are logged but never propagate — event sourcing must not
+        break the simulation flow.
+        """
+        if self.event_store is None:
+            return
+        try:
+            await self.event_store.append(event)
+        except Exception as exc:
+            logger.error("Failed to emit event %s: %s", getattr(event, "event_type", "?"), exc)
+
+    async def _get_next_version(self, aggregate_id: UUID) -> int:
+        """Get the next version number for an aggregate from the event store.
+
+        Queries the event store for the current aggregate version and
+        increments it.  Returns 1 if the aggregate is new.
+        """
+        if self.event_store is None:
+            return 1
+        version = await self.event_store.get_aggregate_version(aggregate_id)
+        return version + 1
+
+    # ------------------------------------------------------------------
+    # Event emission helpers
+    # ------------------------------------------------------------------
+
+    async def _emit_simulation_started(
+        self, aggregate_id: UUID, scenario: ThreatScenario
+    ) -> int:
+        """Emit SimulationStarted event. Returns the version used."""
+        version = await self._get_next_version(aggregate_id)
+        seq = await self._next_sequence()
+        event = SimulationStarted.create(
+            aggregate_id=aggregate_id,
+            scenario_id=uuid4(),
+            max_stages=self.max_stages,
+            initiated_by="system",
+            version=version,
+            sequence_number=seq,
+        )
+        await self._emit_event(event)
+        return version
+
+    async def _emit_stage_started(
+        self, aggregate_id: UUID, stage_number: int,
+        stage_type: str, description: str,
+    ) -> None:
+        """Emit StageStarted event."""
+        version = await self._get_next_version(aggregate_id)
+        seq = await self._next_sequence()
+        event = StageStarted.create(
+            aggregate_id=aggregate_id,
+            stage_number=stage_number,
+            stage_type=stage_type,
+            stage_description=description,
+            version=version,
+            sequence_number=seq,
+        )
+        await self._emit_event(event)
+
+    async def _emit_stage_completed(
+        self, aggregate_id: UUID, stage_number: int, stage_id: str,
+        content_length: int, duration_ms: float,
+    ) -> None:
+        """Emit StageCompleted event."""
+        version = await self._get_next_version(aggregate_id)
+        seq = await self._next_sequence()
+        event = StageCompleted.create(
+            aggregate_id=aggregate_id,
+            stage_number=stage_number,
+            stage_id=stage_id,
+            content_length=content_length,
+            duration_ms=duration_ms,
+            version=version,
+            sequence_number=seq,
+        )
+        await self._emit_event(event)
+
+    async def _emit_stage_failed(
+        self, aggregate_id: UUID, stage_number: int,
+        error_message: str, error_type: str, retry_count: int = 0,
+    ) -> None:
+        """Emit StageFailed event."""
+        version = await self._get_next_version(aggregate_id)
+        seq = await self._next_sequence()
+        event = StageFailed.create(
+            aggregate_id=aggregate_id,
+            stage_number=stage_number,
+            error_message=error_message,
+            error_type=error_type,
+            retry_count=retry_count,
+            version=version,
+            sequence_number=seq,
+        )
+        await self._emit_event(event)
+
+    async def _emit_simulation_completed(
+        self, aggregate_id: UUID, result: SimulationResult
+    ) -> None:
+        """Emit SimulationCompleted event."""
+        version = await self._get_next_version(aggregate_id)
+        seq = await self._next_sequence()
+        total = len(result.stages)
+        successful = sum(1 for s in result.stages if s.success)
+        duration_ms = (result.total_duration_seconds or 0.0) * 1000
+
+        event = SimulationCompleted.create(
+            aggregate_id=aggregate_id,
+            total_stages=total,
+            successful_stages=successful,
+            success_rate=result.success_rate,
+            duration_ms=duration_ms,
+            version=version,
+            sequence_number=seq,
+        )
+        await self._emit_event(event)
+
+    async def _emit_simulation_failed(
+        self, aggregate_id: UUID, error_message: str,
+        failed_at_stage: Optional[int] = None,
+    ) -> None:
+        """Emit SimulationFailed event."""
+        version = await self._get_next_version(aggregate_id)
+        seq = await self._next_sequence()
+        event = SimulationFailed.create(
+            aggregate_id=aggregate_id,
+            error_message=error_message,
+            failed_at_stage=failed_at_stage,
+            version=version,
+            sequence_number=seq,
+        )
+        await self._emit_event(event)
 
     async def execute_simulation(self, scenario: ThreatScenario) -> SimulationResult:
         """Execute a threat simulation scenario.
@@ -79,17 +223,7 @@ class Simulator:
         # Emit SimulationStarted event
         if self.event_store:
             try:
-                version = await self.event_store.get_aggregate_version(aggregate_id)
-                event = SimulationStarted.create(
-                    aggregate_id=aggregate_id,
-                    scenario_id=uuid4(),
-                    max_stages=self.max_stages,
-                    initiated_by="system",
-                    version=version + 1,
-                    sequence_number=0,
-                )
-                await self.event_store.append(event)
-                sim_version = version + 1
+                sim_version = await self._emit_simulation_started(aggregate_id, scenario)
             except Exception as e:
                 logger.warning(f"Failed to emit SimulationStarted event: {e}")
 
@@ -100,8 +234,9 @@ class Simulator:
             start_time=datetime.utcnow()
         )
 
-        # Track active simulation
-        self._active_simulations[result.result_id] = result
+        # Track active simulation (thread-safe)
+        async with self._active_lock:
+            self._active_simulations[result.result_id] = result
 
         try:
             # Execute simulation stages
@@ -114,19 +249,7 @@ class Simulator:
             # Emit SimulationCompleted event
             if self.event_store:
                 try:
-                    successful = sum(1 for s in result.stages if s.success)
-                    duration_ms = (result.total_duration_seconds or 0) * 1000
-                    version = await self.event_store.get_aggregate_version(aggregate_id)
-                    event = SimulationCompleted.create(
-                        aggregate_id=aggregate_id,
-                        total_stages=len(result.stages),
-                        successful_stages=successful,
-                        success_rate=result.success_rate,
-                        duration_ms=duration_ms,
-                        version=version + 1,
-                        sequence_number=0,
-                    )
-                    await self.event_store.append(event)
+                    await self._emit_simulation_completed(aggregate_id, result)
                 except Exception as e:
                     logger.warning(f"Failed to emit SimulationCompleted event: {e}")
 
@@ -137,21 +260,14 @@ class Simulator:
             # Emit SimulationFailed event
             if self.event_store:
                 try:
-                    version = await self.event_store.get_aggregate_version(aggregate_id)
-                    event = SimulationFailed.create(
-                        aggregate_id=aggregate_id,
-                        error_message=str(e),
-                        failed_at_stage=None,
-                        version=version + 1,
-                        sequence_number=0,
-                    )
-                    await self.event_store.append(event)
+                    await self._emit_simulation_failed(aggregate_id, str(e))
                 except Exception as ev_err:
                     logger.warning(f"Failed to emit SimulationFailed event: {ev_err}")
 
         finally:
-            # Remove from active simulations
-            self._active_simulations.pop(result.result_id, None)
+            # Remove from active simulations (thread-safe)
+            async with self._active_lock:
+                self._active_simulations.pop(result.result_id, None)
 
         return result
 
@@ -183,21 +299,14 @@ class Simulator:
 
         for i, stage_config in enumerate(stages_config[:self.max_stages]):
             stage_start = datetime.utcnow()
-            stage_version = sim_version + (i * 2) + 1
 
             # Emit StageStarted event
             if self.event_store and aggregate_id:
                 try:
-                    version = await self.event_store.get_aggregate_version(aggregate_id)
-                    event = StageStarted.create(
-                        aggregate_id=aggregate_id,
-                        stage_number=i + 1,
-                        stage_type=stage_config["type"],
-                        stage_description=stage_config["description"],
-                        version=version + 1,
-                        sequence_number=0,
+                    await self._emit_stage_started(
+                        aggregate_id, i + 1,
+                        stage_config["type"], stage_config["description"],
                     )
-                    await self.event_store.append(event)
                 except Exception as e:
                     logger.warning(f"Failed to emit StageStarted event: {e}")
 
@@ -234,17 +343,10 @@ class Simulator:
                 # Emit StageCompleted event
                 if self.event_store and aggregate_id:
                     try:
-                        version = await self.event_store.get_aggregate_version(aggregate_id)
-                        event = StageCompleted.create(
-                            aggregate_id=aggregate_id,
-                            stage_number=i + 1,
-                            stage_id=stage_config["type"],
-                            content_length=len(stage_content),
-                            duration_ms=stage.duration_seconds * 1000,
-                            version=version + 1,
-                            sequence_number=0,
+                        await self._emit_stage_completed(
+                            aggregate_id, i + 1, stage_config["type"],
+                            len(stage_content), stage.duration_seconds * 1000,
                         )
-                        await self.event_store.append(event)
                     except Exception as e:
                         logger.warning(f"Failed to emit StageCompleted event: {e}")
 
@@ -268,17 +370,9 @@ class Simulator:
                 # Emit StageFailed event
                 if self.event_store and aggregate_id:
                     try:
-                        version = await self.event_store.get_aggregate_version(aggregate_id)
-                        event = StageFailed.create(
-                            aggregate_id=aggregate_id,
-                            stage_number=i + 1,
-                            error_message=str(e),
-                            error_type=type(e).__name__,
-                            retry_count=0,
-                            version=version + 1,
-                            sequence_number=0,
+                        await self._emit_stage_failed(
+                            aggregate_id, i + 1, str(e), type(e).__name__,
                         )
-                        await self.event_store.append(event)
                     except Exception as ev_err:
                         logger.warning(f"Failed to emit StageFailed event: {ev_err}")
 
@@ -1374,7 +1468,9 @@ Generate comprehensive attack planning scenarios for agent training:"""
         if result_id in self._active_simulations:
             result = self._active_simulations[result_id]
             result.status = SimulationStatus.CANCELLED
-            result.mark_completed(success=False, error_message="Simulation cancelled by user")
+            # Set end_time without overwriting CANCELLED status.
+            result.end_time = datetime.utcnow()
+            result.error_message = "Simulation cancelled by user"
             self._active_simulations.pop(result_id)
             logger.info(f"Simulation cancelled: {result_id}")
             return True
