@@ -72,3 +72,8 @@ coverage.xml
 /dev/
 /dev-docs/
 /archive/
+
+# =========================
+# LOCAL SCRIPTS (not tracked)
+# =========================
+scripts/check_git_identity.sh
