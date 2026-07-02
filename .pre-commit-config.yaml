@@ -74,6 +74,14 @@ repos:
 
   - repo: local
     hooks:
+      - id: check-git-identity
+        name: check-git-identity
+        description: Verify active GitHub account matches global git config
+        entry: scripts/check_git_identity.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
       - id: pytest-check
         name: pytest-check
         entry: pytest
