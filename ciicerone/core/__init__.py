@@ -84,6 +84,15 @@ from ciicerone.core.audit_logger import (
     reset_audit_logger,
     sanitize_for_log,
 )
+from ciicerone.core.event_bus import EventBus
+from ciicerone.core.event_types import (
+    BusEvent,
+    EventType,
+    RedTeamAttackStageEvent,
+    BlueTeamAlertEvent,
+    BlueTeamHuntEvent,
+    BlueTeamIncidentCreatedEvent,
+)
 
 __all__ = [
     "SimulationResult",
@@ -151,4 +160,12 @@ __all__ = [
     "get_audit_logger",
     "reset_audit_logger",
     "sanitize_for_log",
+    # Event Bus
+    "EventBus",
+    "BusEvent",
+    "EventType",
+    "RedTeamAttackStageEvent",
+    "BlueTeamAlertEvent",
+    "BlueTeamHuntEvent",
+    "BlueTeamIncidentCreatedEvent",
 ]
