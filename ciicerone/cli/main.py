@@ -68,7 +68,16 @@ def cli(ctx: click.Context, verbose: bool, config: str) -> None:
         console.print(f"[dim]Config: {config}[/dim]")
 
 
-@cli.command()
+@click.group(name="simulate")
+def simulate_group():
+    """Execute and manage threat simulations.
+
+    Includes scenario-based simulations, VM-based attacks, and campaign deployment.
+    """
+    pass
+
+
+@simulate_group.command(name="run")
 @click.option(
     "--scenario",
     "-s",
@@ -561,38 +570,6 @@ def validate(config_file: Optional[str], schema_only: bool, directory: Optional[
         console.print(f"\n[cyan]Validated {valid_count}/{len(yaml_files)} files successfully[/cyan]")
 
 
-# Add templates command group
-cli.add_command(templates)
-
-
-@cli.command()
-@click.option(
-    "--simulation-id",
-    required=True,
-    help="Simulation ID to generate report for",
-)
-@click.option(
-    "--format",
-    type=click.Choice(["pdf", "html", "json", "csv"]),
-    default="html",
-    help="Report format",
-)
-@click.option(
-    "--output-file",
-    "-o",
-    help="Output file path",
-)
-def report(simulation_id: str, format: str, output_file: Optional[str]) -> None:
-    """Generate simulation reports."""
-    console.print(f"[blue]Generating {format} report for simulation:[/blue] {simulation_id}")
-
-    if output_file:
-        console.print(f"[dim]Output file: {output_file}[/dim]")
-
-    # Report generation pending
-    console.print("[yellow]Report generation feature coming soon![/yellow]")
-
-
 @cli.command()
 @click.option(
     "--check-content",
@@ -644,63 +621,82 @@ def status(env: bool) -> None:
             console.print("[yellow]Environment validation module not available[/yellow]")
 
 
+def _report_impl(simulation_id: str, format: str, output_file: Optional[str]) -> None:
+    """Generate simulation reports."""
+    console.print(f"[blue]Generating {format} report for simulation:[/blue] {simulation_id}")
+
+    if output_file:
+        console.print(f"[dim]Output file: {output_file}[/dim]")
+
+    # Report generation pending
+    console.print("[yellow]Report generation feature coming soon![/yellow]")
+
+
+# ==========================================
+# Command Registration (Consolidated)
+# ==========================================
+
+# Add templates command group
+cli.add_command(templates)
+
 # Add LLM integration commands
 cli.add_command(llm_group, name="llm")
 
-# Add intelligence commands
+# Add intelligence commands (absorbs client-data + datasets)
 from .intelligence import intel_group
+from .datasets import datasets
+from .client_data import client_data
+intel_group.add_command(datasets, name="datasets")
+intel_group.add_command(client_data, name="client-data")
 cli.add_command(intel_group, name="intel")
 
-# Add deployment commands
-from .deploy import deploy_group
-cli.add_command(deploy_group, name="deploy")
-
-# Add dataset commands
-from .datasets import datasets
-cli.add_command(datasets, name="datasets")
-
-# Add logs management commands
-cli.add_command(logs_group, name="logs")
-
-# Add VM attack simulation commands
+# Add simulate group (absorbs vm + deploy)
 from .vm import vm_group
-cli.add_command(vm_group, name="vm")
+from .deploy import deploy_group
+simulate_group.add_command(vm_group, name="vm")
+simulate_group.add_command(deploy_group, name="deploy")
+cli.add_command(simulate_group, name="simulate")
+
+# Add logs group (absorbs report)
+cli.add_command(logs_group, name="logs")
+# Add report as a subcommand of logs
+@click.command(name="report")
+@click.option("--simulation-id", required=True, help="Simulation ID to generate report for")
+@click.option("--format", type=click.Choice(["pdf", "html", "json", "csv"]), default="html", help="Report format")
+@click.option("--output-file", "-o", help="Output file path")
+def _logs_report(simulation_id: str, format: str, output_file: Optional[str]) -> None:
+    """Generate simulation reports."""
+    _report_impl(simulation_id, format, output_file)
+logs_group.add_command(_logs_report, name="report")
+
+# Add RAG group (absorbs manuals + validate + feedback)
+from .rag import rag_group
+from .manuals import manuals_group
+from .validate import validate_cli
+from .feedback import feedback_cli
+rag_group.add_command(manuals_group, name="manuals")
+rag_group.add_command(validate_cli, name="validate")
+rag_group.add_command(feedback_cli, name="feedback")
+cli.add_command(rag_group, name="rag")
+
+# Add Detection Rule Generator commands
+cli.add_command(detect_group, name="detect")
+
+# Add Red Team (PentAGI) commands
+from .red_team import red_team
+cli.add_command(red_team, name="red-team")
+
+# Add Blue Team (Defense) commands
+from .blue_team import blue_team
+cli.add_command(blue_team, name="blue-team")
 
 # Add MCP server commands
 from .mcp import mcp_group
 cli.add_command(mcp_group, name="mcp")
 
-# Add field manuals commands
-from .manuals import manuals_group
-cli.add_command(manuals_group, name="manuals")
-
-# Add playbook validation commands
-from .validate import validate_cli
-cli.add_command(validate_cli, name="validate")
-
-# Add RAG system commands
-from .rag import rag_group
-cli.add_command(rag_group, name="rag")
-
-# Add Feedback Loop commands
-from .feedback import feedback_cli
-cli.add_command(feedback_cli, name="feedback")
-
-# Add Detection Rule Generator commands (Issue #25 - Blue Team)
-cli.add_command(detect_group, name="detect")
-
-# TODO: Implement agent module and re-enable
-# from .agent import agent_group
-# cli.add_command(agent_group, name="agent")
-
-# TODO: Implement hunt module and re-enable
-# from .hunt import hunt_group
-# cli.add_command(hunt_group, name="hunt")
-
-# TODO: Implement audit CLI module and re-enable
-# from .audit import audit_group
-# cli.add_command(audit_group, name="audit")
-
+# Add Quantum threat simulation commands
+from .quantum import quantum
+cli.add_command(quantum, name="quantum")
 
 def main() -> int:
     """Main entry point for the CLI."""
