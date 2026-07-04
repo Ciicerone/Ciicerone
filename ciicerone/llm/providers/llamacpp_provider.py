@@ -7,12 +7,14 @@ with support for quantization and various model formats (GGUF, GGML).
 import logging
 import asyncio
 import json
+import os
 from typing import Dict, Any, Optional, List, Union
 from datetime import datetime
 from pathlib import Path
 
 from .local_base import LocalLLMProvider, LocalModelInfo, SystemResourceManager
 from ..base import LLMResponse
+from ..exceptions import AirGapViolationError
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +53,13 @@ class LlamaCppProvider(LocalLLMProvider):
 
         super().__init__(config)
 
+        # Air-gap mode: block external model downloads
+        self.air_gapped = bool(
+            config.get('air_gapped')
+            or config.get('air_gapped_mode')
+            or os.getenv('AIR_GAPPED_MODE', '').lower() in ('true', '1', 'yes')
+        )
+
         # Model file configuration
         self.model_path = config.get('model_path')
         if not self.model_path:
@@ -82,14 +91,27 @@ class LlamaCppProvider(LocalLLMProvider):
 
         # Auto-detect threads if not specified
         if self.n_threads is None:
-            import os
             self.n_threads = max(1, os.cpu_count() // 2)
+
+    def _verify_local_model_path(self, model_path: Path) -> None:
+        """Assert a GGUF model file exists locally.
+
+        Raises:
+            AirGapViolationError: If the model path is missing in air-gap mode.
+            FileNotFoundError: If the model path is missing in normal mode.
+        """
+        if not model_path.exists():
+            if self.air_gapped:
+                raise AirGapViolationError(
+                    f"Model file not found locally: {model_path}. "
+                    "Pre-load GGUF models before enabling AIR_GAPPED_MODE."
+                )
+            raise FileNotFoundError(f"Model file not found: {model_path}")
 
     async def _load_model(self) -> None:
         """Load the llama.cpp model."""
         try:
-            if not self.model_path.exists():
-                raise FileNotFoundError(f"Model file not found: {self.model_path}")
+            self._verify_local_model_path(self.model_path)
 
             logger.info(f"Loading llama.cpp model: {self.model_path}")
 
@@ -422,6 +444,13 @@ class LlamaCppProvider(LocalLLMProvider):
         progress_callback: Optional[callable] = None
     ) -> bool:
         """Download a model from URL."""
+        if self.air_gapped:
+            logger.error("Air-gap mode is enabled; external model download is blocked")
+            raise AirGapViolationError(
+                "Air-gap mode is enabled. External model download is blocked. "
+                "Pre-load GGUF models before enabling AIR_GAPPED_MODE."
+            )
+
         if not REQUESTS_AVAILABLE:
             logger.error("requests library required for model downloading")
             return False
