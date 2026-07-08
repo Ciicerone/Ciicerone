@@ -27,8 +27,8 @@ from ciicerone.core.event_sourcing import (
     StageCompleted,
     SimulationCompleted,
 )
-from ciicerone.core.postgres_event_store import (
-    PostgresEventStore,
+from ciicerone.core.event_sourcing import (
+    EventStore,
     append_with_retry,
 )
 
@@ -58,7 +58,7 @@ def database_url():
 async def event_store(database_url):
     """Create and initialize event store for testing."""
     try:
-        store = await PostgresEventStore.create(
+        store = await EventStore.create(
             database_url,
             min_connections=1,
             max_connections=5
@@ -109,7 +109,7 @@ class TestConnectionAndSetup:
     @pytest.mark.asyncio
     async def test_create_connection_pool(self, database_url):
         """Test that connection pool can be created."""
-        store = await PostgresEventStore.create(database_url)
+        store = await EventStore.create(database_url)
         assert store is not None
         assert store._pool is not None
         await store.close()
@@ -134,7 +134,7 @@ class TestConnectionAndSetup:
     @pytest.mark.asyncio
     async def test_context_manager(self, database_url):
         """Test async context manager properly closes pool."""
-        async with await PostgresEventStore.create(database_url) as store:
+        async with await EventStore.create(database_url) as store:
             assert store._pool is not None
         # Pool should be closed after exiting context
         assert store._pool._closed
