@@ -243,7 +243,7 @@ class TestEventStore:
     @pytest.fixture
     def event_store(self):
         """Create event store for testing (in-memory mode)."""
-        return EventStore(connection_pool=None)
+        return EventStore(pool=None)
 
     @pytest.fixture
     def sample_event(self):
@@ -392,7 +392,7 @@ class TestEventSourcedRepository:
 
     @pytest.fixture
     def event_store(self):
-        return EventStore(connection_pool=None)
+        return EventStore(pool=None)
 
     @pytest.fixture
     def repository(self, event_store):

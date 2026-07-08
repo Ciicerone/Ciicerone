@@ -68,9 +68,8 @@ from ciicerone.core.event_sourcing import (
     AggregateType,
     EventStoreError,
     ConcurrencyError,
-)
-from ciicerone.core.postgres_event_store import (
-    PostgresEventStore,
+    EventNotFoundError,
+    append_with_retry,
 )
 from ciicerone.core.audit_logger import (
     AuditLogger,
@@ -138,8 +137,8 @@ __all__ = [
     "AggregateType",
     "EventStoreError",
     "ConcurrencyError",
-    # PostgreSQL Event Store
-    "PostgresEventStore",
+    "EventNotFoundError",
+    "append_with_retry",
     # Audit Logger
     "AuditLogger",
     "AuditEvent",
