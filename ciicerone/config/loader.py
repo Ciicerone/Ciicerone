@@ -73,6 +73,23 @@ class APIConfig(BaseModel):
     authentication: Dict[str, Any] = Field(default_factory=dict)
 
 
+class DatabaseSectionConfig(BaseModel):
+    """Database persistence layer configuration.
+
+    Controls the SQLAlchemy async engine and connection pool.
+    The ``url`` field falls back to the ``DATABASE_URL`` environment
+    variable at runtime if left empty.
+    """
+
+    url: str = ""  # Falls back to DATABASE_URL env var then postgresql://localhost/ciicerone
+    pool_size: int = 10
+    max_overflow: int = 20
+    pool_timeout: int = 30  # seconds
+    pool_recycle: int = 3600  # seconds
+    echo: bool = False
+    run_migrations_on_startup: bool = False
+
+
 class CiiceroneConfig(BaseModel):
     """Main Ciicerone configuration."""
 
@@ -88,7 +105,8 @@ class CiiceroneConfig(BaseModel):
     deployment: Dict[str, Any] = Field(default_factory=dict)
     integrations: Dict[str, Any] = Field(default_factory=dict)
     intelligence: Dict[str, Any] = Field(default_factory=dict)
-    database: Dict[str, Any] = Field(default_factory=dict)
+    database: DatabaseSectionConfig = Field(default_factory=DatabaseSectionConfig)
+    client_data: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ConfigurationLoader:
