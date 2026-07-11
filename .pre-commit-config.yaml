@@ -82,3 +82,25 @@ repos:
         always_run: false
         args: [--tb=short]
         stages: [manual]
+      - id: maintainer-identity-check
+        name: maintainer-identity-check
+        entry: .githooks/pre-commit-identity
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit]
+      - id: maintainer-route-pr
+        name: maintainer-route-pr
+        entry: .githooks/route-maintainer.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [route-pr, main]
+        stages: [push]
+      - id: block-internal-docs
+        name: block-internal-docs
+        entry: .githooks/block-internal-docs.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit, push]

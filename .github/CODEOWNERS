@@ -42,8 +42,8 @@
 
 # -----------------------------------------------------------------------------
 # Security & Safety - RED Team (Offensive)
-# Maintainers: Temi, Olabisi (TSG-RED)
-# Emails: noblenabeela360@gmail.com, bayulus4great@gmail.com
+# Maintainer: Temi (TSG-RED)
+# Email: noblenabeela360@gmail.com
 # -----------------------------------------------------------------------------
 /ciicerone/safety/ @Thundastormgod
 /SECURITY.md @Thundastormgod
@@ -97,8 +97,8 @@
 
 # -----------------------------------------------------------------------------
 # Templates & Scenarios
-# Maintainers: Temi, Olabisi (TSG-RED)
-# Emails: noblenabeela360@gmail.com, bayulus4great@gmail.com
+# Maintainer: Temi (TSG-RED)
+# Email: noblenabeela360@gmail.com
 # -----------------------------------------------------------------------------
 /templates/ @Thundastormgod
 
@@ -122,7 +122,6 @@
 # Maintainer      | Role              | Code     | Email/GitHub
 # ----------------|-------------------|----------|---------------------------
 # Temi            | Red Team          | TSG-RED  | noblenabeela360@gmail.com
-# Olabisi         | Red Team          | TSG-RED  | bayulus4great@gmail.com
 # David           | Blue Team         | TSG-BLUE | onojad@gmail.com
 # Jibo            | Co-Core Dev       | TSG-DEV  | ajiboyshokunbi@yahoo.com
 # Lara            | Co-Core Dev       | TSG-DEV  | @laradipupo
@@ -134,7 +133,7 @@
 # =============================================================================
 # Issue Assignment Reference (by Maintainer Role)
 # =============================================================================
-# RED Team (Temi, Olabisi): TSG-RED-001 to TSG-RED-008 - Safety, Templates
+# RED Team (Temi): TSG-RED-001 to TSG-RED-008 - Safety, Templates
 # BLUE Team (David): TSG-BLUE-001 to TSG-BLUE-008 - Analytics, Intelligence
 # Co-Core Dev (Jibo, Lara): TSG-DEV-001 to TSG-DEV-016 - Core, API, CLI, MCP, Tests
 # AI/ML Lead (Lanre): TSG-ML-001 to TSG-ML-008 - LLM, RAG, Embeddings
