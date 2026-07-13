@@ -76,5 +76,21 @@ coverage.xml
 # =========================
 # OPENCODE / AI AGENTS
 # =========================
+# Prevent commits of AI agent working directories and config files.
+# See archive repo for full documentation on SSH signing keys setup.
+# https://github.com/Ciicerone/ThreatSimGPT-archive
 .opencode/
+.claude/
+.claude-code/
+.codex/
+.copilot/
+.devin/
+.cursor/
+.cursorrules
+.continue/
+.aider/
+.aider.chat.history.md
+.aider.input.history
+.ai/
+.agents/
 node_modules/
