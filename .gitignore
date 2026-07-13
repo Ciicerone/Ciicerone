@@ -72,3 +72,9 @@ coverage.xml
 /dev/
 /dev-docs/
 /archive/
+
+# =========================
+# OPENCODE / AI AGENTS
+# =========================
+.opencode/
+node_modules/
