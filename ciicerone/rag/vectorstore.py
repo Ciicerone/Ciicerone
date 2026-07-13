@@ -16,6 +16,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
@@ -44,6 +45,7 @@ class EmbeddingService:
         self.config = config
         self._model = None
         self._client = None
+        self._is_azure = False
         self._cache: Dict[str, List[float]] = {}
 
     async def initialize(self):
@@ -58,11 +60,24 @@ class EmbeddingService:
             await self._init_sentence_transformers()
 
     async def _init_openai(self):
-        """Initialize OpenAI client."""
+        """Initialize OpenAI client (Azure OpenAI if configured)."""
         try:
-            from openai import AsyncOpenAI
-            self._client = AsyncOpenAI(api_key=self.config.api_key)
-            logger.info(f"Initialized OpenAI embedding model: {self.config.model.value}")
+            import os
+            azure_key = os.environ.get("AZURE_OPENAI_API_KEY", "")
+            if azure_key:
+                from openai import AsyncAzureOpenAI
+                self._client = AsyncAzureOpenAI(
+                    api_key=azure_key,
+                    azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT", ""),
+                    api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-10-21"),
+                )
+                self._is_azure = True
+                logger.info(f"Initialized Azure OpenAI embedding model: {self.config.model.value}")
+            else:
+                from openai import AsyncOpenAI
+                self._client = AsyncOpenAI(api_key=self.config.api_key)
+                self._is_azure = False
+                logger.info(f"Initialized OpenAI embedding model: {self.config.model.value}")
         except ImportError:
             raise RuntimeError("OpenAI package not installed. Run: pip install openai")
 
@@ -155,8 +170,12 @@ class EmbeddingService:
         for i in range(0, len(texts), self.config.batch_size):
             batch = texts[i:i + self.config.batch_size]
 
+            model_name = self.config.model.value
+            if getattr(self, '_is_azure', False):
+                model_name = os.environ.get("AZURE_OPENAI_EMBEDDING_DEPLOYMENT", "text-embedding-3-small")
+
             response = await self._client.embeddings.create(
-                model=self.config.model.value,
+                model=model_name,
                 input=batch
             )
 
@@ -259,18 +278,18 @@ class Neo4jStore(VectorStoreBase):
     def __init__(self, config: VectorStoreConfig):
         super().__init__(config)
         self._driver = None
-        self._database = config.collection_name or "neo4j"
+        self._database = config.database or "neo4j"
 
     async def initialize(self):
         """Initialize Neo4j connection and vector index."""
         try:
             from neo4j import AsyncGraphDatabase
 
-            # Build connection URI
-            uri = f"bolt://{self.config.host}:{self.config.port}"
+            # Build connection URI - prefer NEO4J_URI env var, fall back to config
+            import os
+            uri = os.environ.get("NEO4J_URI", f"bolt://{self.config.host}:{self.config.port}")
 
             # Get credentials from config or environment
-            import os
             username = os.environ.get("NEO4J_USERNAME", "neo4j")
             password = os.environ.get("NEO4J_PASSWORD", "")
 
@@ -306,6 +325,9 @@ class Neo4jStore(VectorStoreBase):
         """Create vector search index in Neo4j."""
         dimensions = self.config.ef_construction or 1536  # Default OpenAI dimensions
 
+        # Drop existing index first (in case dimensions changed)
+        drop_query = "DROP INDEX chunk_embeddings IF EXISTS"
+
         # Neo4j vector index creation query
         index_query = """
         CREATE VECTOR INDEX chunk_embeddings IF NOT EXISTS
@@ -323,6 +345,7 @@ class Neo4jStore(VectorStoreBase):
 
         async with self._driver.session(database=self._database) as session:
             try:
+                await session.run(drop_query)
                 await session.run(
                     index_query,
                     dimensions=dimensions,
