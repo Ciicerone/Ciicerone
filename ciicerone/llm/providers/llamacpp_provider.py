@@ -51,12 +51,21 @@ class LlamaCppProvider(LocalLLMProvider):
 
         super().__init__(config)
 
+        # Air-gap configuration
+        self._air_gap_config = config.get('air_gap', {})
+        self._air_gap_enabled = self._air_gap_config.get('enabled', False)
+        self._air_gap_block_downloads = self._air_gap_config.get('block_downloads', True)
+        self._air_gap_local_only = self._air_gap_config.get('local_only', True)
+
         # Model file configuration
-        self.model_path = config.get('model_path')
-        if not self.model_path:
+        self._raw_model_path = config.get('model_path')
+        if not self._raw_model_path:
             raise ValueError("model_path is required for LlamaCpp provider")
 
-        self.model_path = Path(self.model_path)
+        self.model_path = Path(self._raw_model_path)
+
+        # Validate local-only enforcement at init
+        self._validate_local_model()
 
         # Model loading parameters
         self.n_ctx = config.get('n_ctx', 2048)  # Context length
@@ -84,6 +93,45 @@ class LlamaCppProvider(LocalLLMProvider):
         if self.n_threads is None:
             import os
             self.n_threads = max(1, os.cpu_count() // 2)
+
+    def _validate_local_model(self) -> None:
+        """Validate the model path is local-only when air-gap is enabled.
+
+        Ensures llama.cpp never reaches external endpoints for model loading
+        when the system is configured for air-gap operation.
+
+        Raises:
+            PermissionError: If air-gap mode is enabled and the model path
+                is not a local file (e.g. a URL or network path).
+        """
+        raw = self._raw_model_path
+
+        # Check for URL/network paths using raw string (before Path normalization)
+        is_url = any(raw.startswith(prefix) for prefix in
+                     ('http://', 'https://', 'http:', 'https:', 'ftp:', 's3:', 'gs:'))
+        is_network_path = raw.startswith('//') or raw.startswith('\\\\')
+
+        if self._air_gap_enabled and self._air_gap_local_only:
+            if is_url:
+                raise PermissionError(
+                    f"Air-gap: model path is a URL ({raw}). "
+                    f"llama.cpp requires a local file path when air-gap mode is enabled."
+                )
+            if is_network_path:
+                raise PermissionError(
+                    f"Air-gap: model path is a network path ({raw}). "
+                    f"llama.cpp requires a local file when air-gap mode is enabled."
+                )
+            if not self.model_path.exists():
+                raise FileNotFoundError(
+                    f"Air-gap: model file not found ({raw}). "
+                    f"Model downloads are blocked in air-gap mode."
+                )
+            if self.model_path.is_dir():
+                raise PermissionError(
+                    f"Air-gap: model path is a directory ({raw}). "
+                    f"llama.cpp requires a file path, not a directory."
+                )
 
     async def _load_model(self) -> None:
         """Load the llama.cpp model."""
@@ -421,7 +469,17 @@ class LlamaCppProvider(LocalLLMProvider):
         download_path: Optional[Union[str, Path]] = None,
         progress_callback: Optional[callable] = None
     ) -> bool:
-        """Download a model from URL."""
+        """Download a model from URL.
+
+        Raises:
+            PermissionError: If air-gap mode is enabled and block_downloads is True.
+        """
+        if self._air_gap_enabled and self._air_gap_block_downloads:
+            raise PermissionError(
+                f"Air-gap: model downloads are blocked. "
+                f"Cannot download {model_url} in air-gap mode."
+            )
+
         if not REQUESTS_AVAILABLE:
             logger.error("requests library required for model downloading")
             return False

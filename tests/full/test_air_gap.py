@@ -163,3 +163,178 @@ class TestAirGapModelDownloadBlocking:
                 assert config["block_downloads"] is True
             else:
                 assert config["block_downloads"] is False
+
+
+class TestLlamaCppLocalOnlyVerification:
+    """Tests for llama.cpp local-only model verification during air-gap.
+
+    Corresponds to PR #209 / Issue #217:
+    Enforce local-only model verification for llama.cpp provider.
+    Ensures llama.cpp never reaches external endpoints when air-gap is enabled.
+    """
+
+    def test_rejects_url_model_path_in_air_gap(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": "https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/resolve/main/model.gguf",
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            with pytest.raises(PermissionError, match="Air-gap: model path is a URL"):
+                LlamaCppProvider(config)
+
+    def test_rejects_network_path_in_air_gap(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": "//nas01/share/models/llama.gguf",
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            with pytest.raises(PermissionError, match="Air-gap: model path is a network path"):
+                LlamaCppProvider(config)
+
+    def test_accepts_local_path_in_air_gap(self, tmp_path):
+        local_model = tmp_path / "llama.gguf"
+        local_model.write_text("fake model data")
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": str(local_model),
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            provider = LlamaCppProvider(config)
+            assert str(provider.model_path) == str(local_model)
+
+    def test_rejects_missing_local_path_in_air_gap(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": str(tmp_path / "nonexistent.gguf"),
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            with pytest.raises(FileNotFoundError, match="model file not found"):
+                LlamaCppProvider(config)
+
+    def test_allows_url_model_path_when_air_gap_disabled(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": "https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGUF/resolve/main/model.gguf",
+                "air_gap": {"enabled": False, "local_only": False, "block_downloads": False},
+            }
+            provider = LlamaCppProvider(config)
+            assert "https:" in str(provider.model_path)
+
+    def test_allows_network_path_when_air_gap_disabled(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": "//nas01/share/models/llama.gguf",
+                "air_gap": {"enabled": False, "local_only": False, "block_downloads": False},
+            }
+            provider = LlamaCppProvider(config)
+            assert "//" in str(provider.model_path)
+
+    def test_accepts_local_path_when_air_gap_disabled(self, tmp_path):
+        local_model = tmp_path / "llama.gguf"
+        local_model.write_text("fake model data")
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": str(local_model),
+                "air_gap": {"enabled": False, "local_only": False, "block_downloads": False},
+            }
+            provider = LlamaCppProvider(config)
+            assert str(provider.model_path) == str(local_model)
+
+    @pytest.mark.asyncio
+    async def test_download_model_blocked_in_air_gap(self):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ), patch(
+            "ciicerone.llm.providers.llamacpp_provider.REQUESTS_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            local_model = Path("/tmp/test_llamacpp_model.gguf")
+            local_model.touch()
+            try:
+                config = {
+                    "model_path": str(local_model),
+                    "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+                }
+                provider = LlamaCppProvider(config)
+                with pytest.raises(PermissionError, match="model downloads are blocked"):
+                    await provider.download_model("https://example.com/model.gguf")
+            finally:
+                local_model.unlink(missing_ok=True)
+
+    @pytest.mark.asyncio
+    async def test_download_model_allowed_when_air_gap_disabled(self):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ), patch(
+            "ciicerone.llm.providers.llamacpp_provider.REQUESTS_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            local_model = Path("/tmp/test_llamacpp_model.gguf")
+            local_model.touch()
+            try:
+                config = {
+                    "model_path": str(local_model),
+                    "air_gap": {"enabled": False, "local_only": False, "block_downloads": False},
+                }
+                provider = LlamaCppProvider(config)
+                result = await provider.download_model("https://example.com/model.gguf")
+                assert result is False
+            finally:
+                local_model.unlink(missing_ok=True)
+
+    def test_rejects_ftp_path_in_air_gap(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": "ftp://models.example.com/llama.gguf",
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            with pytest.raises(PermissionError, match="Air-gap: model path is a URL"):
+                LlamaCppProvider(config)
+
+    def test_rejects_s3_path_in_air_gap(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": "s3://models-bucket/llama.gguf",
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            with pytest.raises(PermissionError, match="Air-gap: model path is a URL"):
+                LlamaCppProvider(config)
+
+    def test_validates_model_path_is_not_a_directory(self, tmp_path):
+        with patch(
+            "ciicerone.llm.providers.llamacpp_provider.LLAMA_CPP_AVAILABLE", True
+        ):
+            from ciicerone.llm.providers.llamacpp_provider import LlamaCppProvider
+            config = {
+                "model_path": str(tmp_path),
+                "air_gap": {"enabled": True, "local_only": True, "block_downloads": True},
+            }
+            with pytest.raises(PermissionError, match="model path is a directory"):
+                LlamaCppProvider(config)
