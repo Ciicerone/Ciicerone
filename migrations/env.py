@@ -25,8 +25,14 @@ if config.config_file_name is not None:
 database_url = os.getenv("DATABASE_URL", "postgresql://localhost/ciicerone")
 config.set_main_option("sqlalchemy.url", database_url)
 
-# Target metadata (not using SQLAlchemy ORM, so None)
-target_metadata = None
+# Target metadata — import the ORM Base so that `alembic revision --autogenerate`
+# can detect new models added under ciicerone.db.models.* in Phase 2.
+try:
+    from ciicerone.db.base import Base
+    target_metadata = Base.metadata
+except ImportError:
+    # db.base not available yet (e.g. running in a stripped-down environment)
+    target_metadata = None
 
 
 def run_migrations_offline() -> None:
