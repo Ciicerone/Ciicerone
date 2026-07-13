@@ -71,14 +71,18 @@ class TestAirGapModelDownloadBlocking:
             result = await mock_pull()
             assert result["status"] == "success"
 
-    @patch("ciicerone.llm.providers.ollama_provider.OllamaProvider._pull_model")
-    def test_model_download_gate_respects_air_gap_flag(
-        self, mock_pull, air_gap_config
+    @pytest.mark.asyncio
+    async def test_model_download_gate_respects_air_gap_flag(
+        self, air_gap_config
     ):
-        mock_pull.side_effect = PermissionError("blocked")
-        if air_gap_config["air_gap"]["block_downloads"]:
-            with pytest.raises(PermissionError, match="blocked"):
-                mock_pull()
+        with patch(
+            "ciicerone.llm.providers.ollama_provider.OllamaProvider._pull_model",
+            new_callable=AsyncMock,
+        ) as mock_pull:
+            mock_pull.side_effect = PermissionError("blocked")
+            if air_gap_config["air_gap"]["block_downloads"]:
+                with pytest.raises(PermissionError, match="blocked"):
+                    await mock_pull()
 
     def test_air_gap_config_rejects_external_urls_when_enabled(self, air_gap_config):
         external_urls = [
@@ -128,13 +132,12 @@ class TestAirGapModelDownloadBlocking:
         self, air_gap_config
     ):
         with patch(
-            "ciicerone.llm.providers.llamacpp_provider.LlamaCppProvider.load_model",
+            "ciicerone.llm.providers.llamacpp_provider.LlamaCppProvider._load_model",
             new_callable=AsyncMock,
         ) as mock_load:
-            mock_load.return_value = True
-            result = await mock_load("/path/to/local/model.gguf")
-            assert result is True
-            mock_load.assert_called_once_with("/path/to/local/model.gguf")
+            mock_load.return_value = None
+            result = await mock_load()
+            assert result is None
 
     @pytest.mark.asyncio
     async def test_air_gap_does_not_block_local_file_access(self, air_gap_config, tmp_path):
@@ -142,12 +145,12 @@ class TestAirGapModelDownloadBlocking:
         local_model.write_text("fake model data")
         assert local_model.exists()
         with patch(
-            "ciicerone.llm.providers.llamacpp_provider.LlamaCppProvider.load_model",
+            "ciicerone.llm.providers.llamacpp_provider.LlamaCppProvider._load_model",
             new_callable=AsyncMock,
         ) as mock_load:
-            mock_load.return_value = True
-            result = await mock_load(str(local_model))
-            assert result is True
+            mock_load.return_value = None
+            result = await mock_load()
+            assert result is None
 
     def test_air_gap_blocks_download_flag_prevents_fetch(self):
         configs = [
