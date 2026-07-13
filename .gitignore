@@ -60,6 +60,12 @@ coverage.xml
 .DS_Store
 
 # =========================
+# OPENCODE / AI AGENTS
+# =========================
+.opencode/
+node_modules/
+
+# =========================
 # TEMPORARY FILES
 # =========================
 *.tmp
