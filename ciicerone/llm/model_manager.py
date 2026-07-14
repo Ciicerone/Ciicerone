@@ -6,7 +6,6 @@ and manage local models across different providers.
 
 import logging
 import asyncio
-import os
 from typing import Dict, Any, List, Optional, Tuple, Callable
 from pathlib import Path
 import json
@@ -41,12 +40,35 @@ class ModelManager:
         self.model_cache_dir = Path(self.config.get('model_cache_dir', './models'))
         self.model_cache_dir.mkdir(parents=True, exist_ok=True)
 
+        # Air-gap mode: structured config matching provider pattern
+        air_gap_config = self.config.get('air_gap', {})
+        self.air_gap_enabled = air_gap_config.get('enabled', False)
+        self.air_gap_block_downloads = air_gap_config.get('block_downloads', True)
+
         # Model registry file
         self.registry_file = self.model_cache_dir / 'model_registry.json'
         self.registry = self._load_registry()
 
         # Session management for HTTP requests
         self._session: Optional[aiohttp.ClientSession] = None
+
+    def _is_model_preloaded(self, model_name: str, provider: str) -> bool:
+        """Check if a model is already registered locally.
+
+        Args:
+            model_name: Name of the model.
+            provider: Provider identifier.
+
+        Returns:
+            True if the model is registered and the file still exists.
+        """
+        info = self.registry.get('models', {}).get(model_name)
+        if not info:
+            return False
+        if info.get('provider') != provider:
+            return False
+        path = Path(info.get('path', ''))
+        return path.exists()
 
     async def _get_session(self) -> aiohttp.ClientSession:
         """Get or create aiohttp session with connection pooling."""
@@ -409,6 +431,20 @@ class ModelManager:
         """Download a model file for local providers."""
         if not REQUESTS_AVAILABLE:
             return {"error": "requests library required for downloads"}
+
+        if self.air_gap_enabled and self.air_gap_block_downloads:
+            if self._is_model_preloaded(model_name, provider):
+                return {
+                    "status": "success",
+                    "model_name": model_name,
+                    "provider": provider,
+                    "path": self.registry['models'][model_name]['path'],
+                    "message": "Model already available locally in air-gap mode.",
+                }
+            raise PermissionError(
+                f"Model {model_name} not found in local cache. "
+                "Pre-load models before enabling air-gap mode."
+            )
 
         try:
             # Create provider-specific directory
