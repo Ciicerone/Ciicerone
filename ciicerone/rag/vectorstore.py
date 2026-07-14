@@ -514,12 +514,16 @@ class Neo4jStore(VectorStoreBase):
         # First, get vector search results
         base_results = await self.search(query_embedding, top_k=top_k)
 
-        if not expand_techniques and not expand_cves:
+        if not base_results or (not expand_techniques and not expand_cves):
             return base_results
 
-        # Enrich with graph context
+        # Enrich with graph context — single batched query for all chunks
+        # (previously one query per result: classic N+1, see issue #72).
+        # Aggregations group by chunk_id, so per-chunk semantics are
+        # identical to the old per-row query.
         enrichment_query = """
-        MATCH (c:Chunk {id: $chunk_id})
+        UNWIND $chunk_ids AS chunk_id
+        MATCH (c:Chunk {id: chunk_id})
 
         // Get related techniques
         OPTIONAL MATCH (c)-[:REFERENCES_TECHNIQUE]->(t:Technique)
@@ -532,7 +536,8 @@ class Neo4jStore(VectorStoreBase):
         // Get threat actors using these techniques
         OPTIONAL MATCH (a:ThreatActor)-[:USES_TECHNIQUE]->(t)
 
-        RETURN collect(DISTINCT {
+        RETURN chunk_id,
+        collect(DISTINCT {
             technique_id: t.id,
             technique_name: t.name,
             tactic: tac.name
@@ -545,21 +550,26 @@ class Neo4jStore(VectorStoreBase):
         collect(DISTINCT a.name) AS threat_actors
         """
 
-        async with self._driver.session(database=self._database) as session:
-            for result in base_results:
-                try:
-                    enrichment = await session.run(
-                        enrichment_query,
-                        chunk_id=result.chunk.id
-                    )
-                    record = await enrichment.single()
+        try:
+            async with self._driver.session(database=self._database) as session:
+                enrichment = await session.run(
+                    enrichment_query,
+                    chunk_ids=[r.chunk.id for r in base_results]
+                )
+                records = await enrichment.data()
 
-                    if record and result.chunk.metadata:
-                        result.chunk.metadata["techniques"] = record["techniques"]
-                        result.chunk.metadata["cves"] = record["cves"]
-                        result.chunk.metadata["threat_actors"] = record["threat_actors"]
-                except Exception as e:
-                    logger.debug(f"Graph enrichment failed: {e}")
+            enrichment_by_id = {rec["chunk_id"]: rec for rec in records}
+
+            for result in base_results:
+                record = enrichment_by_id.get(result.chunk.id)
+                if record:
+                    if result.chunk.metadata is None:
+                        result.chunk.metadata = {}
+                    result.chunk.metadata["techniques"] = record["techniques"]
+                    result.chunk.metadata["cves"] = record["cves"]
+                    result.chunk.metadata["threat_actors"] = record["threat_actors"]
+        except Exception as e:
+            logger.debug(f"Graph enrichment failed: {e}")
 
         return base_results
 
@@ -570,39 +580,54 @@ class Neo4jStore(VectorStoreBase):
         relationship_type: str = "REFERENCES_TECHNIQUE"
     ):
         """Add a relationship between a chunk and a MITRE technique."""
+        await self.add_technique_relationships(
+            [{"chunk_id": chunk_id, "technique_id": technique_id}]
+        )
+
+    async def add_technique_relationships(self, relationships: List[Dict[str, str]]):
+        """Add chunk→technique relationships in a single batched query.
+
+        Each item: {"chunk_id": ..., "technique_id": ...}
+        """
+        if not relationships:
+            return
+
         query = """
-        MATCH (c:Chunk {id: $chunk_id})
-        MERGE (t:Technique {id: $technique_id})
+        UNWIND $rels AS rel
+        MATCH (c:Chunk {id: rel.chunk_id})
+        MERGE (t:Technique {id: rel.technique_id})
         MERGE (c)-[r:REFERENCES_TECHNIQUE]->(t)
         SET r.created_at = datetime()
-        RETURN c, t
         """
 
         async with self._driver.session(database=self._database) as session:
-            await session.run(
-                query,
-                chunk_id=chunk_id,
-                technique_id=technique_id
-            )
+            await session.run(query, rels=relationships)
 
     async def add_cve_relationship(self, chunk_id: str, cve_id: str, severity: str = ""):
         """Add a relationship between a chunk and a CVE."""
+        await self.add_cve_relationships(
+            [{"chunk_id": chunk_id, "cve_id": cve_id, "severity": severity}]
+        )
+
+    async def add_cve_relationships(self, relationships: List[Dict[str, str]]):
+        """Add chunk→CVE relationships in a single batched query.
+
+        Each item: {"chunk_id": ..., "cve_id": ..., "severity": ...}
+        """
+        if not relationships:
+            return
+
         query = """
-        MATCH (c:Chunk {id: $chunk_id})
-        MERGE (v:CVE {id: $cve_id})
-        SET v.severity = $severity
+        UNWIND $rels AS rel
+        MATCH (c:Chunk {id: rel.chunk_id})
+        MERGE (v:CVE {id: rel.cve_id})
+        SET v.severity = coalesce(rel.severity, '')
         MERGE (c)-[r:MENTIONS_CVE]->(v)
         SET r.created_at = datetime()
-        RETURN c, v
         """
 
         async with self._driver.session(database=self._database) as session:
-            await session.run(
-                query,
-                chunk_id=chunk_id,
-                cve_id=cve_id,
-                severity=severity
-            )
+            await session.run(query, rels=relationships)
 
     async def delete(self, ids: List[str]):
         """Delete chunks by ID."""
@@ -649,9 +674,12 @@ class Neo4jStore(VectorStoreBase):
 
     async def get_related_chunks(self, chunk_id: str, depth: int = 2) -> List[Chunk]:
         """Get chunks related through graph traversal."""
-        query = """
-        MATCH (c:Chunk {id: $chunk_id})
-        MATCH path = (c)-[*1..$depth]-(related:Chunk)
+        # Cypher does not allow parameters in variable-length path bounds
+        # ([*1..$depth] is a syntax error), so validate and interpolate.
+        depth = max(1, min(int(depth), 5))
+        query = f"""
+        MATCH (c:Chunk {{id: $chunk_id}})
+        MATCH path = (c)-[*1..{depth}]-(related:Chunk)
         WHERE related <> c
         RETURN DISTINCT related.id AS id,
                related.content AS content,
@@ -667,7 +695,7 @@ class Neo4jStore(VectorStoreBase):
         chunks = []
 
         async with self._driver.session(database=self._database) as session:
-            result = await session.run(query, chunk_id=chunk_id, depth=depth)
+            result = await session.run(query, chunk_id=chunk_id)
             records = await result.data()
 
             for record in records:
@@ -1095,6 +1123,20 @@ class VectorStoreManager:
         """Add CVE relationship (Neo4j only)."""
         if isinstance(self._store, Neo4jStore):
             await self._store.add_cve_relationship(chunk_id, cve_id, severity)
+        else:
+            logger.warning("CVE relationships only supported with Neo4j")
+
+    async def add_technique_relationships(self, relationships: List[Dict[str, str]]):
+        """Add many chunk→technique relationships in one query (Neo4j only)."""
+        if isinstance(self._store, Neo4jStore):
+            await self._store.add_technique_relationships(relationships)
+        else:
+            logger.warning("Technique relationships only supported with Neo4j")
+
+    async def add_cve_relationships(self, relationships: List[Dict[str, str]]):
+        """Add many chunk→CVE relationships in one query (Neo4j only)."""
+        if isinstance(self._store, Neo4jStore):
+            await self._store.add_cve_relationships(relationships)
         else:
             logger.warning("CVE relationships only supported with Neo4j")
 
