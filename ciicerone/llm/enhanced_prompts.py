@@ -1,4 +1,4 @@
-"""Enhanced Prompt Engineering System for ThreatSimGPT.
+"""Enhanced Prompt Engineering System for Ciicerone.
 
 This module implements production-grade prompt templates for all content types,
 following industry best practices from OpenAI, Anthropic, and Google research.
