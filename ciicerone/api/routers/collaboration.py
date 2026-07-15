@@ -73,3 +73,11 @@ async def leave_room(room_id: str, user_id: str):
     if room is None:
         raise HTTPException(status_code=404, detail="Room not found")
     return {"status": "left", "room_id": room_id}
+
+
+@router.get("/health")
+async def collaboration_health():
+    return {
+        "status": "operational" if room_manager else "unavailable",
+        "rooms": len(await room_manager.list_rooms()) if room_manager else 0,
+    }
