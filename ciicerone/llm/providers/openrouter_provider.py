@@ -1,4 +1,4 @@
-"""OpenRouter LLM provider for ThreatSimGPT.
+"""OpenRouter LLM provider for Ciicerone.
 
 This provider integrates with OpenRouter API to access multiple LLM models
 through a single API interface, providing flexibility and cost-effectiveness.
@@ -27,10 +27,10 @@ class OpenRouterProvider(BaseLLMProvider):
         self.api_key = config.get('api_key')
         self.model = config.get('model', 'qwen/qwen3-vl-235b-a22b-thinking')  # Default to working Qwen model
         self.base_url = config.get('base_url', 'https://openrouter.ai/api/v1')
-        self.app_name = config.get('app_name', 'ThreatSimGPT')
-        self.site_url = config.get('site_url', 'https://github.com/threatsimgpt-AI/ThreatSimGPT')
+        self.app_name = config.get('app_name', 'Ciicerone')
+        self.site_url = config.get('site_url', 'https://github.com/Ciicerone/Ciicerone')
 
-        # Popular model options for ThreatSimGPT (including user's working Qwen model)
+        # Popular model options for Ciicerone (including user's working Qwen model)
         self.recommended_models = {
             'qwen-3l-235b': 'qwen/qwen3-vl-235b-a22b-thinking',  # User's preferred working model
             'qwen-2.5-72b': 'qwen/qwen-2.5-72b-instruct',
@@ -218,7 +218,7 @@ class OpenRouterProvider(BaseLLMProvider):
 
     def _get_system_prompt(self, scenario_type: str) -> str:
         """Get system prompt based on scenario type."""
-        base_prompt = """You are ThreatSimGPT, an AI assistant specialized in generating realistic threat scenario samples for cybersecurity training and agent development.
+        base_prompt = """You are Ciicerone, an AI assistant specialized in generating realistic threat scenario samples for cybersecurity training and agent development.
 
 Your role is to create actual threat scenario content that demonstrates how real attacks work, which will be used to:
 1. Train security professionals to recognize threats

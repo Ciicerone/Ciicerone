@@ -1,4 +1,4 @@
-"""Comprehensive LLM integration package for ThreatSimGPT.
+"""Comprehensive LLM integration package for Ciicerone.
 
 This package provides complete LLM integration including:
 - Provider abstraction layer (OpenAI, Anthropic)
