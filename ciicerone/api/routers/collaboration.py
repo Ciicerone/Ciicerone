@@ -39,3 +39,37 @@ async def get_room(room_id: str):
     if room is None:
         raise HTTPException(status_code=404, detail="Room not found")
     return room
+
+
+@router.get("/rooms/{room_id}/members", response_model=List[RoomMember])
+async def get_room_members(room_id: str):
+    if room_manager is None:
+        raise HTTPException(status_code=503, detail="Room manager not initialized")
+    return await room_manager.get_room_members(room_id)
+
+
+@router.get("/rooms/{room_id}/online", response_model=List[RoomMember])
+async def get_online_users(room_id: str):
+    if room_manager is None:
+        raise HTTPException(status_code=503, detail="Room manager not initialized")
+    return await room_manager.get_online_users(room_id)
+
+
+@router.post("/rooms/{room_id}/join")
+async def join_room(room_id: str, user_id: str, username: str = "", role: str = "member"):
+    if room_manager is None:
+        raise HTTPException(status_code=503, detail="Room manager not initialized")
+    room = await room_manager.join_room(room_id, user_id, username, role)
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    return {"status": "joined", "room_id": room_id}
+
+
+@router.post("/rooms/{room_id}/leave")
+async def leave_room(room_id: str, user_id: str):
+    if room_manager is None:
+        raise HTTPException(status_code=503, detail="Room manager not initialized")
+    room = await room_manager.leave_room(room_id, user_id)
+    if room is None:
+        raise HTTPException(status_code=404, detail="Room not found")
+    return {"status": "left", "room_id": room_id}
