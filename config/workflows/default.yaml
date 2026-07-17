@@ -1,0 +1,174 @@
+version: "1.0"
+metadata:
+  name: default-workflows
+  description: Default approval workflows for Ciicerone operations
+  created: "2026-07-17"
+
+approval:
+  default_timeout_minutes: 1440
+  max_escalations: 3
+  audit_enabled: true
+  require_mfa_for:
+    - system_admin
+    - data_export
+  notify_channels:
+    - log
+    - event_bus
+
+  chains:
+    - name: threat-hunt-standard
+      description: Standard approval chain for threat hunting operations
+      operation_types:
+        - threat_hunt
+      timeout_minutes: 1440
+      require_all_steps: true
+      allow_parallel: false
+      max_escalations: 3
+      audit_level: detailed
+      steps:
+        - name: team-lead-review
+          description: Team lead reviews the hunt plan
+          required_roles:
+            - team_lead
+          min_approvers: 1
+          timeout_minutes: 240
+          escalation_step: manager-review
+          require_justification: true
+          notify_on_approval:
+            - log
+          notify_on_rejection:
+            - log
+            - requester
+
+        - name: manager-review
+          description: Manager approves the hunt execution
+          required_roles:
+            - manager
+          min_approvers: 1
+          timeout_minutes: 120
+          escalation_step: admin-escalation
+          require_justification: true
+          require_mfa: true
+          notify_on_approval:
+            - log
+            - requester
+          notify_on_rejection:
+            - log
+            - requester
+            - team_lead
+
+        - name: admin-escalation
+          description: Admin escalation for high-risk operations
+          required_roles:
+            - admin
+          min_approvers: 1
+          timeout_minutes: 60
+          require_justification: true
+          require_mfa: true
+          notify_on_approval:
+            - log
+            - requester
+            - manager
+          notify_on_rejection:
+            - log
+            - requester
+            - manager
+            - team_lead
+
+    - name: incident-response
+      description: Approval chain for incident response operations
+      operation_types:
+        - incident_response
+      timeout_minutes: 480
+      require_all_steps: true
+      allow_parallel: false
+      max_escalations: 2
+      audit_level: detailed
+      steps:
+        - name: soc-lead-review
+          description: SOC lead triages and approves the response
+          required_roles:
+            - soc_analyst
+          min_approvers: 1
+          timeout_minutes: 30
+          escalation_step: manager-escalation
+          require_justification: true
+          notify_on_approval:
+            - log
+          notify_on_rejection:
+            - log
+            - requester
+
+        - name: manager-escalation
+          description: Manager escalation for critical incidents
+          required_roles:
+            - manager
+          min_approvers: 1
+          timeout_minutes: 15
+          require_justification: true
+          require_mfa: true
+          notify_on_approval:
+            - log
+            - requester
+          notify_on_rejection:
+            - log
+            - requester
+            - soc_analyst
+
+    - name: system-admin
+      description: Three-level approval for system administration
+      operation_types:
+        - system_admin
+      timeout_minutes: 2880
+      require_all_steps: true
+      max_escalations: 3
+      audit_level: detailed
+      steps:
+        - name: team-lead-review
+          description: Team lead reviews the admin action
+          required_roles:
+            - team_lead
+          min_approvers: 1
+          timeout_minutes: 480
+          escalation_step: manager-approval
+          require_justification: true
+          notify_on_approval:
+            - log
+          notify_on_rejection:
+            - log
+            - requester
+
+        - name: manager-approval
+          description: Manager approves the admin action
+          required_roles:
+            - manager
+          min_approvers: 1
+          timeout_minutes: 240
+          escalation_step: admin-escalation
+          require_justification: true
+          require_mfa: true
+          notify_on_approval:
+            - log
+            - requester
+          notify_on_rejection:
+            - log
+            - requester
+            - team_lead
+
+        - name: admin-escalation
+          description: Final admin approval for critical changes
+          required_roles:
+            - admin
+          min_approvers: 1
+          timeout_minutes: 60
+          require_justification: true
+          require_mfa: true
+          notify_on_approval:
+            - log
+            - requester
+            - manager
+          notify_on_rejection:
+            - log
+            - requester
+            - manager
+            - team_lead
