@@ -1,4 +1,4 @@
-"""Tree of Thoughts and advanced reasoning implementations for ThreatSimGPT.
+"""Tree of Thoughts and advanced reasoning implementations for Ciicerone.
 
 This module implements Levels 3-6 of advanced prompt engineering:
 - Tree of Thoughts (ToT) for complex scenario planning
