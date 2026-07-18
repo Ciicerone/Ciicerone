@@ -1,4 +1,4 @@
-"""Advanced Prompt Engineering Integration for ThreatSimGPT.
+"""Advanced Prompt Engineering Integration for Ciicerone.
 
 This module integrates all 6 levels of advanced prompt engineering techniques
 into a unified system for optimal threat simulation content generation.
@@ -43,7 +43,7 @@ class AdvancedGenerationResult:
 
 class AdvancedPromptEngineering:
     """
-    Unified Advanced Prompt Engineering System for ThreatSimGPT
+    Unified Advanced Prompt Engineering System for Ciicerone
 
     Integrates all 6 levels of advanced prompt engineering:
     1. Chain-of-Thought (CoT) prompting

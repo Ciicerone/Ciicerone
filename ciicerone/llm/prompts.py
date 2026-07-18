@@ -1,4 +1,4 @@
-"""Advanced prompt engineering framework for ThreatSimGPT.
+"""Advanced prompt engineering framework for Ciicerone.
 
 This module provides sophisticated prompt templates, context injection,
 and content generation strategies for various threat simulation scenarios.

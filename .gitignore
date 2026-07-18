@@ -78,7 +78,7 @@ coverage.xml
 # =========================
 # Prevent commits of AI agent working directories and config files.
 # See archive repo for full documentation on SSH signing keys setup.
-# https://github.com/Ciicerone/ThreatSimGPT-archive
+# https://github.com/Ciicerone/Ciicerone-archive
 .opencode/
 .claude/
 .claude-code/
