@@ -1,4 +1,4 @@
-"""RLHF Optimization and Multi-Agent Prompt Engineering for ThreatSimGPT.
+"""RLHF Optimization and Multi-Agent Prompt Engineering for Ciicerone.
 
 This module implements the final two levels of advanced prompt engineering:
 - Level 5: Reinforcement Learning from Human Feedback (RLHF) optimization

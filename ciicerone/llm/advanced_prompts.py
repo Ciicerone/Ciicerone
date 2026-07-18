@@ -1,4 +1,4 @@
-"""Advanced prompt engineering implementations for ThreatSimGPT.
+"""Advanced prompt engineering implementations for Ciicerone.
 
 This module implements cutting-edge prompt engineering techniques based on recent research:
 - Chain-of-Thought (CoT) prompting (Wei et al., 2022)

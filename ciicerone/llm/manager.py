@@ -1,4 +1,4 @@
-"""LLM manager for ThreatSimGPT content generation.
+"""LLM manager for Ciicerone content generation.
 
 This module provides a production-ready LLM manager that handles
 content generation for threat scenarios with multiple provider support.
