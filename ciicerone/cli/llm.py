@@ -39,7 +39,13 @@ def llm_group():
 @click.option("--openai-key", help="OpenAI API key", envvar="OPENAI_API_KEY")
 @click.option("--anthropic-key", help="Anthropic API key", envvar="ANTHROPIC_API_KEY")
 @click.option("--openrouter-key", help="OpenRouter API key", envvar="OPENROUTER_API_KEY")
-def test_providers(openai_key: Optional[str], anthropic_key: Optional[str], openrouter_key: Optional[str]):
+@click.option("--atlascloud-key", help="Atlas Cloud API key", envvar="ATLASCLOUD_API_KEY")
+def test_providers(
+    openai_key: Optional[str],
+    anthropic_key: Optional[str],
+    openrouter_key: Optional[str],
+    atlascloud_key: Optional[str],
+):
     """Test configured LLM providers."""
 
     def _check_api_key_error(error_msg: str) -> tuple[bool, str]:
@@ -143,6 +149,28 @@ def test_providers(openai_key: Optional[str], anthropic_key: Optional[str], open
         else:
             provider_status["openrouter"] = {"configured": False, "key_status": "MISSING"}
 
+        # Check Atlas Cloud
+        if atlascloud_key:
+            is_placeholder = "your_" in atlascloud_key.lower()
+            if is_placeholder:
+                provider_status["atlascloud"] = {
+                    "configured": True,
+                    "key_status": "PLACEHOLDER",
+                    "message": "API key appears to be a placeholder value"
+                }
+            else:
+                config = LLMProviderConfig(
+                    provider=LLMProvider.ATLASCLOUD,
+                    api_key=atlascloud_key,
+                    default_model=LLMModel.ATLAS_GPT_5_6_LUNA,
+                )
+                provider_manager.add_provider(config, set_as_default=providers_configured == 0)
+                providers_configured += 1
+                provider_status["atlascloud"] = {"configured": True, "key_status": "SET"}
+                console.print("[OK] Atlas Cloud provider configured")
+        else:
+            provider_status["atlascloud"] = {"configured": False, "key_status": "MISSING"}
+
         # Show configuration summary
         console.print("\n[bold]Provider Configuration Status:[/bold]")
         config_table = Table(show_header=True)
@@ -168,7 +196,10 @@ def test_providers(openai_key: Optional[str], anthropic_key: Optional[str], open
 
         if providers_configured == 0:
             console.print("\n[yellow][WARN][/yellow] No valid providers configured for testing.")
-            console.print("Set environment variables: OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY")
+            console.print(
+                "Set environment variables: OPENAI_API_KEY, ANTHROPIC_API_KEY, "
+                "OPENROUTER_API_KEY, or ATLASCLOUD_API_KEY"
+            )
             return
 
         # Test providers
@@ -252,6 +283,7 @@ def test_providers(openai_key: Optional[str], anthropic_key: Optional[str], open
 @click.option("--openai-key", help="OpenAI API key", envvar="OPENAI_API_KEY")
 @click.option("--anthropic-key", help="Anthropic API key", envvar="ANTHROPIC_API_KEY")
 @click.option("--openrouter-key", help="OpenRouter API key", envvar="OPENROUTER_API_KEY")
+@click.option("--atlascloud-key", help="Atlas Cloud API key", envvar="ATLASCLOUD_API_KEY")
 def generate(
     scenario_file: Path,
     content_type: str,
@@ -262,6 +294,7 @@ def generate(
     openai_key: Optional[str],
     anthropic_key: Optional[str],
     openrouter_key: Optional[str],
+    atlascloud_key: Optional[str],
 ):
     """Generate threat content from a scenario file."""
 
@@ -319,8 +352,20 @@ def generate(
             provider_manager.add_provider(config, set_as_default=providers_configured == 0)
             providers_configured += 1
 
+        if atlascloud_key:
+            config = LLMProviderConfig(
+                provider=LLMProvider.ATLASCLOUD,
+                api_key=atlascloud_key,
+                default_model=LLMModel.ATLAS_GPT_5_6_LUNA,
+            )
+            provider_manager.add_provider(config, set_as_default=providers_configured == 0)
+            providers_configured += 1
+
         if providers_configured == 0:
-            console.print("[yellow][WARN][/yellow] No providers configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY environment variables.")
+            console.print(
+                "[yellow][WARN][/yellow] No providers configured. Set OPENAI_API_KEY, "
+                "ANTHROPIC_API_KEY, OPENROUTER_API_KEY, or ATLASCLOUD_API_KEY."
+            )
             return
 
         # Create generation service

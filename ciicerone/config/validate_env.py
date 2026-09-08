@@ -84,6 +84,10 @@ API_KEY_VARS = [
         description="OpenRouter API key"
     ),
     EnvVar(
+        name="ATLASCLOUD_API_KEY",
+        description="Atlas Cloud API key"
+    ),
+    EnvVar(
         name="AZURE_OPENAI_API_KEY",
         description="Azure OpenAI API key"
     ),
@@ -174,7 +178,8 @@ def validate_environment(
         if not has_llm_key and not ollama_enabled:
             warnings.append(
                 "No LLM API key found. Set one of: OPENAI_API_KEY, ANTHROPIC_API_KEY, "
-                "OPENROUTER_API_KEY, or enable OLLAMA_ENABLED=true for local models."
+                "OPENROUTER_API_KEY, ATLASCLOUD_API_KEY, or enable OLLAMA_ENABLED=true "
+                "for local models."
             )
 
     # Log results

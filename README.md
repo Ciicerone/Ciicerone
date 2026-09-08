@@ -21,7 +21,7 @@
 
 ### Key Features
 
-- **Multi-LLM Support**: OpenAI GPT-4, Anthropic Claude, OpenRouter, Ollama, and local models
+- **Multi-LLM Support**: OpenAI GPT-4, Anthropic Claude, OpenRouter, Atlas Cloud, Ollama, and local models
 - **YAML-Based Templates**: Define threat scenarios using intuitive, version-controlled templates
 - **Production-Grade Architecture**: Scalable, maintainable codebase with zero code duplication
 - **CLI & REST API**: Flexible interfaces for automation and integration
@@ -390,6 +390,9 @@ safety:
 export OPENROUTER_API_KEY="your-key-here"
 export OPENAI_API_KEY="your-key-here"
 export ANTHROPIC_API_KEY="your-key-here"
+
+# Atlas Cloud (optional)
+export ATLASCLOUD_API_KEY="your-key-here"
 
 # Deployment Integration
 export M365_TENANT_ID="your-tenant-id"
@@ -964,4 +967,3 @@ Users are solely responsible for ensuring compliance with all applicable laws, r
 ---
 
 **Built for the cybersecurity community**
-

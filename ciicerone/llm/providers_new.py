@@ -488,6 +488,16 @@ class OpenRouterProviderAdapter(BaseLLMProvider):
         return True
 
 
+class AtlasCloudProvider(OpenAIProvider):
+    """Atlas Cloud provider for its OpenAI-compatible LLM endpoint."""
+
+    SUPPORTED_MODELS = {LLMModel.ATLAS_GPT_5_6_LUNA}
+
+    def __init__(self, config: LLMProviderConfig):
+        super().__init__(config.model_copy(update={"max_retries": 0}))
+        self.base_url = "https://api.atlascloud.ai/v1"
+
+
 class LLMProviderManager:
     """Manager for multiple LLM providers with automatic routing."""
 
@@ -504,6 +514,8 @@ class LLMProviderManager:
         elif config.provider == LLMProvider.OPENROUTER:
             # Create a simple OpenRouter provider for testing
             provider = OpenRouterProviderAdapter(config)
+        elif config.provider == LLMProvider.ATLASCLOUD:
+            provider = AtlasCloudProvider(config)
         else:
             raise ValueError(f"Unsupported provider: {config.provider}")
 
@@ -549,5 +561,7 @@ class LLMProviderManager:
         elif target_provider == LLMProvider.OPENROUTER:
             # OpenRouter supports many models - return common ones
             return [LLMModel.GPT_35_TURBO, LLMModel.GPT_4, LLMModel.CLAUDE_3_HAIKU]
+        elif target_provider == LLMProvider.ATLASCLOUD:
+            return list(AtlasCloudProvider.SUPPORTED_MODELS)
         else:
             return []
