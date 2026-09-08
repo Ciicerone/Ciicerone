@@ -24,6 +24,7 @@ class LLMProvider(str, Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     OPENROUTER = "openrouter"
+    ATLASCLOUD = "atlascloud"
     OLLAMA = "ollama"  # Local LLM support via Ollama
     # Future providers can be added here
     # GOOGLE = "google"
@@ -37,6 +38,9 @@ class LLMModel(str, Enum):
     GPT_4_TURBO = "gpt-4-turbo-preview"
     GPT_4 = "gpt-4"
     GPT_35_TURBO = "gpt-3.5-turbo"
+
+    # Atlas Cloud Models
+    ATLAS_GPT_5_6_LUNA = "openai/gpt-5.6-luna"
 
     # Anthropic Models
     CLAUDE_3_SONNET = "claude-3-sonnet-20240229"
